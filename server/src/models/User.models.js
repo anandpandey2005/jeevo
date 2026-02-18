@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose';
 
 const UserSchema = new Schema(
   {
@@ -9,22 +9,26 @@ const UserSchema = new Schema(
     _id: {
       type: String,
       lowercase: true,
-      required: [true, "email is required"],
+      trim: true,
+      required: [true, 'email is required'],
+      index: true,
     },
     fullName: {
       firstName: {
         type: String,
-        // required: true,
         trim: true,
+        default: null,
       },
       lastName: {
         type: String,
-        // required: true,
-        // trim: true,
+        trim: true,
+        default: null,
       },
     },
     phone: {
       type: String,
+      trim: true,
+      index: true,
       default: null,
     },
 
@@ -32,18 +36,24 @@ const UserSchema = new Schema(
       country: {
         type: String,
         trim: true,
-        // required: true,
+        default: null,
       },
       state: {
         type: String,
         trim: true,
-        // required: true,
+        default: null,
       },
       district: {
         type: String,
         trim: true,
-        // required: true,
+        default: null,
       },
+    },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+      index: true,
+      default: null,
     },
     level: {
       type: Number,
@@ -59,13 +69,22 @@ const UserSchema = new Schema(
     },
     otpExpiry: {
       type: Date,
+      default: null,
     },
-    otpVerified: {
+    emailotpVerified: {
       type: Boolean,
       default: false,
     },
+    phoneotpVerified: {
+      type: Boolean,
+      default: false,
+    },
+    phoneotpExpiry: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true, _id: false },
+  { timestamps: true, _id: false }
 );
 
-export const User = mongoose.model("User", UserSchema);
+export const User = mongoose.model('User', UserSchema);

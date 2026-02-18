@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import "./App.css";
-import { LandingPage } from "./handler/index.js";
+import './App.css';
+import { LandingPage } from './handler/index.js';
 function App() {
   return (
     <>

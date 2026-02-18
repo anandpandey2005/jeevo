@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
-import { User } from "../models/User.models.js";
+import nodemailer from 'nodemailer';
+import { User } from '../models/User.models.js';
 
 const makeOtp = async (_id) => {
   try {
@@ -10,15 +10,13 @@ const makeOtp = async (_id) => {
 
     return otp;
   } catch (err) {
-    console.error("Error in makeOtp:", err.message);
-    throw new Error("Failed to generate OTP");
+    console.error('Error in makeOtp:', err.message);
+    throw new Error('Failed to generate OTP');
   }
 };
-console.log(process.env.EMAIL);
-console.log(process.env.EMAILAPPPASSWORD);
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 587,
   secure: false,
   auth: {
@@ -32,7 +30,7 @@ const sendOtp2Email = async (req, res) => {
     const { email } = req?.body || undefined;
 
     if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+      return res.status(400).json({ message: 'Email is required' });
     }
 
     const otp = await makeOtp(email);
@@ -91,9 +89,9 @@ const sendOtp2Email = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "OTP sent successfully" });
+      .json({ success: true, message: 'OTP sent successfully' });
   } catch (err) {
-    console.error("Error in sendOtp2Email:", err.message);
+    console.error('Error in sendOtp2Email:', err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
 };

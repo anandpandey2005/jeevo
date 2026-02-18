@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose';
 
 const RequestSchema = new Schema(
   {
@@ -8,20 +8,20 @@ const RequestSchema = new Schema(
     bloodType: {
       type: String,
       required: true,
-      enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
     },
     unitsRequired: { type: Number, default: 1 },
 
     locationType: {
       type: String,
-      enum: ["Live", "Custom"],
+      enum: ['Live', 'Custom'],
       required: true,
-      default: "Custom",
+      default: 'Custom',
     },
- 
+
     liveCoordinates: {
-      type: { type: String, enum: ["Point"], default: "Point" },
-      coordinates: { type: [Number], index: "2dsphere" },
+      type: { type: String, enum: ['Point'], default: 'Point' },
+      coordinates: { type: [Number], index: '2dsphere' },
     },
 
     customAddress: {
@@ -43,25 +43,24 @@ const RequestSchema = new Schema(
 
     status: {
       type: String,
-      enum: ["Pending", "Fulfilled", "Cancelled"],
-      default: "Pending",
+      enum: ['Pending', 'Fulfilled', 'Cancelled'],
+      default: 'Pending',
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-
-RequestSchema.pre("save", function (next) {
+RequestSchema.pre('save', function (next) {
   if (
-    this.locationType === "Live" &&
+    this.locationType === 'Live' &&
     !this.liveCoordinates.coordinates.length
   ) {
-    next(new Error("Live coordinates are required when locationType is Live"));
+    next(new Error('Live coordinates are required when locationType is Live'));
   } else {
     next();
   }
 });
 
 const Request =
-  mongoose.models.Request || mongoose.model("Request", RequestSchema);
+  mongoose.models.Request || mongoose.model('Request', RequestSchema);
 export default Request;

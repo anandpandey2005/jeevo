@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Search,
   Heart,
@@ -6,7 +6,7 @@ import {
   Activity,
   Hospital,
   ArrowRight,
-} from "lucide-react";
+} from 'lucide-react';
 
 export default function StartupLanding() {
   return (
@@ -102,7 +102,7 @@ export default function StartupLanding() {
               thousands of nearby donors in seconds.
             </p>
             <button className="flex items-center gap-2 mx-auto bg-white text-slate-900 px-8 py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition">
-              <Hospital size={20} /> Register Your Facility{" "}
+              <Hospital size={20} /> Register Your Facility{' '}
               <ArrowRight size={18} />
             </button>
           </div>
