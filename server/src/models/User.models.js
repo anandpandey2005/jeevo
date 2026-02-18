@@ -8,18 +8,19 @@ const UserSchema = new Schema(
     },
     _id: {
       type: String,
+      lowercase: true,
       required: [true, "email is required"],
     },
     fullName: {
       firstName: {
         type: String,
-        required: true,
+        // required: true,
         trim: true,
       },
       lastName: {
         type: String,
-        required: true,
-        trim: true,
+        // required: true,
+        // trim: true,
       },
     },
     phone: {
@@ -31,17 +32,17 @@ const UserSchema = new Schema(
       country: {
         type: String,
         trim: true,
-        required: true,
+        // required: true,
       },
       state: {
         type: String,
         trim: true,
-        required: true,
+        // required: true,
       },
       district: {
         type: String,
         trim: true,
-        required: true,
+        // required: true,
       },
     },
     level: {
@@ -56,6 +57,9 @@ const UserSchema = new Schema(
       type: Number,
       default: null,
     },
+    otpExpiry: {
+      type: Date,
+    },
     otpVerified: {
       type: Boolean,
       default: false,
@@ -63,3 +67,5 @@ const UserSchema = new Schema(
   },
   { timestamps: true, _id: false },
 );
+
+export const User = mongoose.model("User", UserSchema);
