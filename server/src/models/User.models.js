@@ -83,6 +83,10 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
+    loggedin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true, _id: false }
 );

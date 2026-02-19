@@ -96,4 +96,39 @@ const sendOtp2Email = async (req, res) => {
   }
 };
 
+const verifyOtp = async (req, res) => {
+  try {
+    const userId = req.cookies?._id;
+    const { otp } = req.body;
+
+    if (!userId || !otp) {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, null, 'User ID and OTP are required'));
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json(new ApiResponse(404, null, 'User not found'));
+    }
+
+    if (user.otp !== otp) {
+      return res.status(401).json(new ApiResponse(401, null, 'Invalid OTP'));
+    }
+
+    user.loggedin = true;
+    user.otp = undefined;
+    await user.save();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, { userId: user._id }, 'OTP verified successfully')
+      );
+  } catch (error) {
+    return res.status(500).json(new ApiResponse(500, null, error.message));
+  }
+};
+
 export { sendOtp2Email };
