@@ -85,7 +85,7 @@ export default function OurMission() {
 
             {/* THE PASS CARD (GRAPHIC TYPE UI) */}
             <div className="relative flex justify-center">
-              <div className="w-full max-w-sm bg-gradient-to-br from-slate-100 to-white rounded-[2.5rem] p-8 text-slate-900 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border border-white">
+              <div className="w-full max-w-sm bg-linear-to-br from-slate-100 to-white rounded-[2.5rem] p-8 text-slate-900 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border border-white">
                 <div className="flex justify-between mb-12">
                   <div className="text-2xl font-black italic text-red-600">JEEVO</div>
                   <div className="bg-slate-900 text-white text-[8px] px-3 py-1 rounded-full font-black uppercase tracking-tighter">Verified Hero</div>

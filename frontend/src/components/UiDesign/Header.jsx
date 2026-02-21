@@ -53,7 +53,7 @@ export default function Header() {
         style={{ zIndex: 55 }}
       />
 
-      <div className={`fixed top-0 right-0 w-[80%] h-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden z-[60] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed top-0 right-0 w-[80%] h-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden z-60 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         
         <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <div className="text-2xl font-black text-red-600 italic">JEEVO</div>
