@@ -71,19 +71,15 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
-    emailotpVerified: {
-      type: Boolean,
-      default: false,
-    },
     phoneotpVerified: {
       type: Boolean,
       default: false,
     },
-    phoneotpExpiry: {
-      type: Date,
-      default: null,
+    isLoggedin: {
+      type: Boolean,
+      default: false,
     },
-    loggedin: {
+    isEliteHero: {
       type: Boolean,
       default: false,
     },
