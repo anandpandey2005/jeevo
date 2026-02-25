@@ -8,63 +8,63 @@ import {
   Smartphone, 
   Stethoscope, 
   HeartHandshake,
-  ArrowRight
+  ArrowRight,
+  FileText
 } from 'lucide-react';
 
 /**
  * SERVICE PAGE: JEEVO PLATFORM CAPABILITIES
- * Logic: Showcases the technical features that facilitate the 
- * Donor-Receiver-Sponsor ecosystem.
+ * Refined for: Legal Compensation Model & Verified Health Logistics
  */
 
 export default function Service() {
   const services = [
     {
       title: "Real-Time Geo-Linking",
-      desc: "Our proprietary algorithm connects donors to receivers within a 10km radius in under 60 seconds.",
+      desc: "Our MERN-powered algorithm connects donors to receivers within 10km. No more broad-casting; get surgical precision in emergency.",
       icon: <MapPin className="text-red-600" />,
       tag: "Live Tracking"
     },
     {
-      title: "20+ Backer Verification",
-      desc: "A crowdsourced trust layer where community members vouch for the urgency of a blood request.",
-      icon: <ShieldCheck className="text-blue-600" />,
-      tag: "Security"
+      title: "Letterhead Verification",
+      desc: "Every request is cross-checked with Hospital Letterheads and Doctor IDs. 0% Fake requests, 100% Transparency.",
+      icon: <FileText className="text-blue-600" />,
+      tag: "Trust Layer"
     },
     {
-      title: "Elite Hero Pass",
-      desc: "Automatic enrollment for donors into our 1-year health program after fulfilling priority requests.",
+      title: "Compensation Wallet",
+      desc: "Automated distribution of up to ₹1800 for donor travel and nutrition. Legal, secure, and instant via Escrow.",
       icon: <Gift className="text-pink-600" />,
-      tag: "Rewards"
+      tag: "Donor Support"
     },
     {
-      title: "Smart Push Alerts",
-      desc: "Donors get notified only for requests matching their blood type and proximity to avoid notification fatigue.",
-      icon: <Bell className="text-orange-500" />,
-      tag: "Automation"
+      title: "90-Day Smart Cooldown",
+      desc: "Automated health-safeguard system. Our tech ensures no donor can donate twice within the medical rest period.",
+      icon: <Zap className="text-orange-500" />,
+      tag: "Health Safety"
     },
     {
       title: "Quarterly Health Scans",
-      desc: "Facilitating 1 Full Body checkup every 3 months for our active donor community.",
+      desc: "The 'Hero Pass' grants 1 Full Body diagnostic test every 3 months. We track your health while you save lives.",
       icon: <Stethoscope className="text-green-600" />,
       tag: "Annual Care"
     },
     {
-      title: "Hospital Dashboard",
-      desc: "Custom portal for clinics to verify blood units and distribute Heart Credits instantly via QR.",
+      title: "Hospital OTP Dashboard",
+      desc: "Direct integration for clinics to verify successful donations via secure OTP, releasing rewards instantly.",
       icon: <Smartphone className="text-indigo-600" />,
       tag: "Enterprise"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] pt-32 pb-20 font-sans">
+    <div className="min-h-screen bg-[#fcfcfc] pt-32 pb-20 font-sans selection:bg-red-500 selection:text-white">
       
       {/* --- HEADER --- */}
       <section className="px-6 max-w-5xl mx-auto text-center mb-24">
-        <h2 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-4">Our Ecosystem</h2>
+        <h2 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-4">The Jeevo Engine</h2>
         <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter italic uppercase leading-none">
-          Integrated <br /> <span className="text-slate-400 font-light">Solutions.</span>
+          Medical <br /> <span className="text-slate-400 font-light">Infrastructure.</span>
         </h1>
       </section>
 
@@ -98,43 +98,43 @@ export default function Service() {
 
       {/* --- REWARD WORKFLOW SECTION --- */}
       <section className="max-w-7xl mx-auto px-6 mt-40">
-        <div className="bg-red-600 rounded-[4rem] p-10 md:p-20 text-white flex flex-col lg:flex-row items-center gap-16 overflow-hidden relative">
+        <div className="bg-red-600 rounded-[4rem] p-10 md:p-20 text-white flex flex-col lg:flex-row items-center gap-16 overflow-hidden relative shadow-2xl shadow-red-500/30">
           {/* Background Decorative Text */}
-          <div className="absolute -bottom-10 -right-10 text-[15rem] font-black opacity-10 italic select-none pointer-events-none">
-            HERO
+          <div className="absolute -bottom-10 -right-10 text-[15rem] font-black opacity-10 italic select-none pointer-events-none uppercase">
+            Jeevo
           </div>
 
           <div className="lg:w-1/2 relative z-10">
-            <h2 className="text-4xl md:text-6xl font-black italic leading-none mb-8 tracking-tighter">
-              HOW WE <br />REWARD YOU.
+            <h2 className="text-4xl md:text-6xl font-black italic leading-none mb-8 tracking-tighter uppercase">
+              How we <br />Protect You.
             </h2>
             <p className="text-red-100 text-lg font-medium mb-10 leading-relaxed">
-              Donating blood shouldn't just be a sacrifice. Through our partnership 
-              with <b>120+ Diagnostic Centers</b>, we've automated the health reward 
-              cycle for every verified donor.
+              We've created a legal <b>'Donor Support Ecosystem'</b>. Every rupee of the ₹1800 
+              compensation is tracked as travel and recovery reimbursement, keeping 
+              you and the receiver 100% legally safe.
             </p>
             <div className="flex gap-4">
                <div className="bg-slate-900 px-6 py-4 rounded-2xl">
-                  <div className="text-2xl font-black tracking-tighter italic">4X</div>
-                  <div className="text-[10px] font-bold uppercase opacity-60">Tests per year</div>
+                  <div className="text-2xl font-black tracking-tighter italic uppercase text-red-500">₹1800</div>
+                  <div className="text-[10px] font-bold uppercase opacity-60">Max Support</div>
                </div>
                <div className="bg-white/10 backdrop-blur-md border border-white/20 px-6 py-4 rounded-2xl">
-                  <div className="text-2xl font-black tracking-tighter italic">0$</div>
-                  <div className="text-[10px] font-bold uppercase opacity-60">Donor Cost</div>
+                  <div className="text-2xl font-black tracking-tighter italic uppercase">100%</div>
+                  <div className="text-[10px] font-bold uppercase opacity-60">Verified</div>
                </div>
             </div>
           </div>
 
           <div className="lg:w-1/2 space-y-4 relative z-10">
             {[
-              "1. Find a 20+ Backed Request",
-              "2. Donate at a Verified Hospital",
-              "3. QR-Scan for Heart Credit",
-              "4. Unlock Q1 Full Body Voucher"
+              "1. Requestor Uploads Hospital Proof",
+              "2. Jeevo Verifies Doctor Stamp",
+              "3. Donor Arrives (Geo-Fence Check)",
+              "4. Hospital OTP Unlocks Rewards"
             ].map((step, i) => (
               <div key={i} className="flex justify-between items-center bg-white/10 backdrop-blur-xl p-6 rounded-3xl border border-white/5 hover:bg-white/20 transition-all cursor-default">
-                <span className="font-black italic text-lg tracking-tight">{step}</span>
-                <HeartHandshake size={20} className="text-red-300" />
+                <span className="font-black italic text-lg tracking-tight uppercase">{step}</span>
+                <ShieldCheck size={20} className="text-red-300" />
               </div>
             ))}
           </div>
@@ -142,12 +142,12 @@ export default function Service() {
       </section>
 
       {/* --- CALL TO ACTION --- */}
-      <section className="mt-40 text-center px-6">
+      <section className="mt-40 text-center px-6 pb-10">
         <div className="max-w-3xl mx-auto bg-slate-50 border border-slate-100 p-12 rounded-[3.5rem]">
-          <h3 className="text-3xl font-black mb-6 italic tracking-tight">Need a customized integration for your Hospital?</h3>
-          <p className="text-slate-500 mb-8 font-medium">Join our network of 500+ verified medical centers using Jeevo's real-time dashboard.</p>
-          <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 mx-auto hover:bg-red-600 transition-all">
-            Get Api Access <ArrowRight size={18} />
+          <h3 className="text-3xl font-black mb-6 italic tracking-tight uppercase">Ready to scale the mission?</h3>
+          <p className="text-slate-500 mb-8 font-medium">Register your hospital today to access our automated blood-inventory & donor tracking dashboard.</p>
+          <button className="bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 mx-auto hover:bg-red-600 transition-all active:scale-95 shadow-xl">
+            Register Hospital <ArrowRight size={18} />
           </button>
         </div>
       </section>

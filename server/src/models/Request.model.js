@@ -11,7 +11,10 @@ const RequestSchema = new Schema(
       enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
     },
     unitsRequired: { type: Number, default: 1 },
-
+    unitFullFill: {
+      type: Number,
+      default: 1,
+    },
     locationType: {
       type: String,
       enum: ['Live', 'Custom'],

@@ -6,6 +6,7 @@ import {
   OurMission,
   Service,
   Testinomial,
+  Footer,
 } from './handler/index.js';
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
           />
         </Routes>
       </main>
+      <Footer></Footer>
     </>
   );
 }
