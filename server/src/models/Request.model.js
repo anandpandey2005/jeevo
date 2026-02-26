@@ -26,12 +26,16 @@ const RequestSchema = new Schema(
       type: { type: String, enum: ['Point'], default: 'Point' },
       coordinates: { type: [Number], index: '2dsphere' },
     },
-
+    googleMapLink: {
+      type: String,
+      default: null,
+    },
     customAddress: {
       hospitalName: { type: String, required: true },
       fullAddress: { type: String },
       city: { type: String },
       landmark: { type: String },
+      pincode: { type: String, default: null },
     },
 
     isSponsored: {
