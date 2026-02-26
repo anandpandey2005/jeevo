@@ -7,6 +7,7 @@ import {
   Service,
   Testinomial,
   Footer,
+  RequestCard,
 } from './handler/index.js';
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           />
         </Routes>
       </main>
+      <RequestCard className=""></RequestCard>
       <Footer></Footer>
     </>
   );
