@@ -1,7 +1,13 @@
 import mongoose, { Schema } from 'mongoose';
+import { User } from './User.models.js';
 
 const RequestSchema = new Schema(
   {
+    createdBy: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     verificationFile: { type: String, required: true },
     patientName: { type: String, required: true },
     age: { type: Number, required: true },
@@ -11,13 +17,13 @@ const RequestSchema = new Schema(
       enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
     },
     unitsRequired: { type: Number, default: 1 },
-    unitFullFill: {
+    unitFullFilled: {
       type: Number,
-      default: 1,
+      default: null,
     },
     locationType: {
       type: String,
-      enum: ['Live', 'Custom'],
+      enum: ['Live', 'Custom', 'Both'],
       required: true,
       default: 'Custom',
     },
@@ -32,27 +38,46 @@ const RequestSchema = new Schema(
     },
     customAddress: {
       hospitalName: { type: String, required: true },
-      fullAddress: { type: String },
-      city: { type: String },
-      landmark: { type: String },
-      pincode: { type: String, default: null },
-    },
-
-    isSponsored: {
-      type: Boolean,
-      default: false,
-    },
-    giftDetails: {
-      amount: { type: Number, default: 0 },
-      giftType: { type: String },
-      description: { type: String },
+      address: { type: String, trim: true, required: true },
+      state: {
+        type: String,
+        trim: true,
+        required: true,
+      },
+      district: {
+        type: String,
+        trim: true,
+        required: true,
+      },
+      cityOrTown: {
+        type: String,
+        trim: true,
+        required: true,
+      },
+      pincode: {
+        type: String,
+        required: true,
+        match: [
+          /^[1-9][0-9]{5}$/,
+          'Please provide a valid 6-digit Indian pincode',
+        ],
+      },
     },
 
     status: {
       type: String,
-      enum: ['Pending', 'Fulfilled', 'Cancelled'],
+      enum: ['Pending', 'Closed'],
       default: 'Pending',
     },
+    enrolledUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+
+    donations: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        unitsDonated: { type: Number, required: true, default: 1 },
+        donatedAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

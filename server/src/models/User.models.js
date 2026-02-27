@@ -48,6 +48,19 @@ const UserSchema = new Schema(
         trim: true,
         default: null,
       },
+      cityOrTown: {
+        type: String,
+        trim: true,
+        default: null,
+      },
+      pincode: {
+        type: String,
+        required: true,
+        match: [
+          /^[1-9][0-9]{5}$/,
+          'Please provide a valid 6-digit Indian pincode',
+        ],
+      },
     },
     bloodGroup: {
       type: String,
@@ -58,10 +71,6 @@ const UserSchema = new Schema(
     level: {
       type: Number,
       default: 1,
-    },
-    heart: {
-      type: Number,
-      default: null,
     },
     otp: {
       type: Number,
@@ -79,7 +88,7 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    isEliteHero: {
+    isGenuineHero: {
       type: Boolean,
       default: false,
     },
