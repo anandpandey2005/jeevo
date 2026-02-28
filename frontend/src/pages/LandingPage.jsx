@@ -32,7 +32,7 @@ export default function StartupLanding() {
           Locate. Donate. <br />
           <span className="text-red-600">Celebrate.</span>
         </h1>
-
+ 
         <p className="text-base md:text-xl text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
           The world’s first hyper-local blood bridge. Connect with emergency
           requests and earn{' '}
