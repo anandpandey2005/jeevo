@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import {
   LandingPage,
@@ -8,13 +8,16 @@ import {
   Testinomial,
   Footer,
   RequestCard,
+  UserDashboard,
 } from './handler/index.js';
 
 function App() {
+  const location = useLocation();
+  const isDashboardRoute = location.pathname.startsWith('/user/dashboard/');
+
   return (
     <>
-      {/* Header stays outside Routes so it shows on every page */}
-      <Header />
+      {!isDashboardRoute && <Header />}
 
       <main>
         <Routes>
@@ -47,10 +50,15 @@ function App() {
               </div>
             }
           />
+          <Route
+            path="/dashboard/user/:id"
+            element={<UserDashboard />}
+          />
+          
         </Routes>
       </main>
-      <RequestCard className=""></RequestCard>
-      <Footer></Footer>
+      {!isDashboardRoute && <RequestCard className="" />}
+      {!isDashboardRoute && <Footer />}
     </>
   );
 }
