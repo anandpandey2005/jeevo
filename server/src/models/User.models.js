@@ -1,38 +1,63 @@
 import mongoose, { Schema } from 'mongoose';
-
+import Request from './Request.model.js';
 const UserSchema = new Schema(
   {
-    avatar: {
+    image: {
       type: String,
       default: null,
     },
-    _id: {
-      type: String,
-      lowercase: true,
-      trim: true,
-      required: [true, 'email is required'],
-      index: true,
+    name: {
+      first: {
+        type: String,
+        trim: true,
+        default: null,
+      },
+      last: {
+        type: String,
+        trim: true,
+        default: null,
+      },
     },
-    fullName: {
-      firstName: {
-        type: String,
-        trim: true,
-        default: null,
-      },
-      lastName: {
-        type: String,
-        trim: true,
-        default: null,
-      },
+    gmail: {
+      type: String,
+      trim: true,
+      unique: [true, 'Already Exists'],
+      lowercase: true,
     },
     phone: {
-      type: String,
-      trim: true,
-      index: true,
-      default: null,
+      number: {
+        type: String,
+        trim: true,
+        index: { unique: true, sparse: true },
+        validate: {
+          validator: function (v) {
+            return /\d{10}/.test(v);
+          },
+          message: (props) => `${props.value} is not a valid phone number!`,
+        },
+      },
+      country: {
+        type: String,
+        default: '+91',
+        trim: true,
+      },
+      isOtpVerified: {
+        type: Boolean,
+        default: false,
+      },
     },
-
     address: {
+      line1: {
+        type: String,
+        trim: true,
+        required: true,
+      },
+      line2: {
+        type: String,
+        default: null,
+        trim: true,
+        lowercase: true,
+      },
       country: {
         type: String,
         trim: true,
@@ -44,11 +69,6 @@ const UserSchema = new Schema(
         default: null,
       },
       district: {
-        type: String,
-        trim: true,
-        default: null,
-      },
-      cityOrTown: {
         type: String,
         trim: true,
         default: null,
@@ -68,6 +88,15 @@ const UserSchema = new Schema(
       index: true,
       default: null,
     },
+    history: {
+      requests: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'request',
+        },
+      ],
+      Donated: [{ type: mongoose.Schema.Types.ObjectId, ref: 'request' }],
+    },
     level: {
       type: Number,
       default: 1,
@@ -80,10 +109,6 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
-    phoneotpVerified: {
-      type: Boolean,
-      default: false,
-    },
     isLoggedin: {
       type: Boolean,
       default: false,
@@ -93,7 +118,14 @@ const UserSchema = new Schema(
       default: false,
     },
   },
-  { timestamps: true, _id: false }
+  { timestamps: true }
 );
+
+// UserSchema.pre(['save', 'updateOne', 'updateMany'], function (next) {
+//   if (this.isModified('level') && this.level > 5) {
+//     this.isGenuineHero = true;
+//   }
+//   next();
+// });
 
 export const User = mongoose.model('User', UserSchema);
