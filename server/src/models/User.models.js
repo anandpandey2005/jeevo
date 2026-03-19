@@ -109,6 +109,12 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
+    role: {
+      type: String,
+      enum: ['donor', 'hero', 'user', 'admin', 'hospital'],
+      default: 'donor',
+      index: true,
+    },
     isLoggedin: {
       type: Boolean,
       default: false,

@@ -9,17 +9,22 @@ import {
   Footer,
   RequestCard,
   UserDashboard,
+  Auth,
+  Requests,
+  ThemeToggle,
 } from './handler/index.js';
 
 function App() {
   const location = useLocation();
-  const isDashboardRoute = location.pathname.startsWith('/user/dashboard/');
+  const isDashboardRoute = location.pathname.startsWith('/dashboard/user/');
+  const isAuthRoute = location.pathname.startsWith('/login');
+  const hideChrome = isDashboardRoute || isAuthRoute;
 
   return (
     <>
-      {!isDashboardRoute && <Header />}
+      {!hideChrome && <Header />}
 
-      <main>
+      <main className="w-full">
         <Routes>
           {/* Define the paths for your project */}
           <Route path="/" element={<LandingPage />} />
@@ -34,14 +39,8 @@ function App() {
               </div>
             }
           />
-          <Route
-            path="/pending-requests"
-            element={
-              <div className="pt-32 text-center text-3xl font-bold">
-                Pending Requests coming soon...
-              </div>
-            }
-          />
+          <Route path="/pending-requests" element={<Requests />} />
+          <Route path="/login" element={<Auth />} />
           <Route
             path="/testimonials"
             element={
@@ -50,15 +49,12 @@ function App() {
               </div>
             }
           />
-          <Route
-            path="/dashboard/user/:id"
-            element={<UserDashboard />}
-          />
-          
+          <Route path="/dashboard/user/:id" element={<UserDashboard />} />
         </Routes>
       </main>
-      {!isDashboardRoute && <RequestCard className="" />}
-      {!isDashboardRoute && <Footer />}
+      {!hideChrome && <RequestCard className="" />}
+      {!hideChrome && <Footer />}
+      <ThemeToggle />
     </>
   );
 }

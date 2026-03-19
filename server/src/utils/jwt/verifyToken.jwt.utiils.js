@@ -9,5 +9,4 @@ const verifyToken = (data) => {
   }
 };
 
-console.log(process.env.JWT_SECRET_KEY)
 export default verifyToken;

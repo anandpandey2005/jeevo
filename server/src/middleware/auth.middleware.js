@@ -44,7 +44,7 @@ const authMiddleware = async (req, res, next) => {
     req.user = {
       _id: user._id,
       email: user.gmail || null,
-      role: user.role || 'user',
+      role: user.role || 'donor',
       isLoggedin: user.isLoggedin,
       isGenuineHero: Boolean(user.isGenuineHero),
     };

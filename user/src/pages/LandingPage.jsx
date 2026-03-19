@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Search,
   Heart,
@@ -18,14 +19,65 @@ import {
 
 export default function StartupLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [stats, setStats] = useState({
+    totalUsers: null,
+    totalDonors: null,
+    pendingRequests: null,
+  });
+  const navigate = useNavigate();
+  const isLoggedIn = useMemo(() => {
+    try {
+      return Boolean(localStorage.getItem('jeevo_user'));
+    } catch {
+      return false;
+    }
+  }, []);
+
+  const handleDonateClick = () => {
+    if (isLoggedIn) {
+      navigate('/pending-requests');
+      return;
+    }
+    navigate('/login?next=/pending-requests&role=donor');
+  };
+
+  const handleRaiseRequestClick = () => {
+    if (isLoggedIn) {
+      navigate('/dashboard/user/me?focus=create');
+      return;
+    }
+    navigate('/login?next=dashboard&role=hero');
+  };
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/public/stats');
+        const payload = await response.json().catch(() => null);
+        if (response.ok && payload?.data) {
+          setStats({
+            totalUsers: payload.data.totalUsers ?? null,
+            totalDonors: payload.data.totalDonors ?? null,
+            pendingRequests: payload.data.pendingRequests ?? null,
+          });
+        }
+      } catch {
+        setStats({ totalUsers: null, totalDonors: null, pendingRequests: null });
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] font-sans text-slate-900 selection:bg-red-200 overflow-x-hidden">
+    <div className="min-h-screen bg-[var(--bg)] font-sans text-slate-900 selection:bg-red-200 overflow-x-hidden">
    
       <section className="pt-40 pb-20 px-6 text-center max-w-5xl mx-auto">
         <div className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-full text-[10px] md:text-sm font-bold mb-8 shadow-sm">
           <span className="flex h-2 w-2 rounded-full bg-red-600 animate-pulse"></span>
-          Live: 1,240 Verified Requests Nearby
+          Live:{' '}
+          {stats.pendingRequests !== null
+            ? `${stats.pendingRequests} Verified Requests`
+            : 'Verified Requests Nearby'}
         </div>
 
         <h1 className="text-5xl md:text-8xl font-black text-slate-900 leading-[0.9] mb-8 tracking-tighter uppercase italic">
@@ -43,10 +95,16 @@ export default function StartupLanding() {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 px-4">
-          <button className="bg-red-600 text-white px-8 md:px-10 py-5 rounded-[1.5rem] font-black text-lg md:text-xl shadow-2xl shadow-red-200 hover:bg-red-700 hover:-translate-y-1 transition-all active:scale-95">
+          <button
+            onClick={handleDonateClick}
+            className="bg-red-600 text-white px-8 md:px-10 py-5 rounded-[1.5rem] font-black text-lg md:text-xl shadow-2xl shadow-red-200 hover:bg-red-700 hover:-translate-y-1 transition-all active:scale-95"
+          >
             I WANT TO DONATE
           </button>
-          <button className="bg-white border-2 border-slate-200 text-slate-700 px-8 md:px-10 py-5 rounded-[1.5rem] font-black text-lg md:text-xl hover:bg-slate-100 transition-all active:scale-95">
+          <button
+            onClick={handleRaiseRequestClick}
+            className="bg-white border-2 border-slate-200 text-slate-700 px-8 md:px-10 py-5 rounded-[1.5rem] font-black text-lg md:text-xl hover:bg-slate-100 transition-all active:scale-95"
+          >
             RAISE REQUEST
           </button>
         </div>
@@ -56,9 +114,12 @@ export default function StartupLanding() {
       <div className="max-w-7xl mx-auto px-6 mb-24">
         <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-slate-200/60 border border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { val: '50k+', label: 'Lives Saved' },
-            { val: '120+', label: 'Hospitals' },
-            { val: '10min', label: 'Avg Response' },
+            { val: stats.totalDonors ?? '12k+', label: 'Registered Donors' },
+            { val: stats.totalUsers ?? '20k+', label: 'Registered Users' },
+            {
+              val: stats.pendingRequests ?? '1.2k',
+              label: 'Live Requests',
+            },
             { val: '0', label: 'Processing Fees', prefix: '₹' },
           ].map((stat, i) => (
             <div
@@ -231,10 +292,10 @@ export default function StartupLanding() {
               </div>
               <div>
                 <div className="font-black text-2xl tracking-tighter italic">
-                  412
+                  {stats.totalDonors ?? 412}
                 </div>
                 <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                  Active Donors Nearby
+                  Registered Donors
                 </div>
               </div>
             </div>

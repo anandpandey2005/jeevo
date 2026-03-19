@@ -7,13 +7,21 @@ const normalizeEmail = (value = '') =>
     .trim()
     .toLowerCase();
 
-const makeOtp = async (email) => {
+const normalizeRole = (value = '') => {
+  const normalized = String(value || '').trim().toLowerCase();
+  if (!normalized) return null;
+  const allowed = new Set(['donor', 'hero', 'user', 'admin', 'hospital']);
+  return allowed.has(normalized) ? normalized : null;
+};
+
+const makeOtp = async (email, role) => {
   try {
     const normalizedEmail = normalizeEmail(email);
     if (!normalizedEmail) {
       throw new Error('Email is required');
     }
 
+    const normalizedRole = normalizeRole(role);
     const otp = Math.floor(100000 + Math.random() * 900000);
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -21,7 +29,10 @@ const makeOtp = async (email) => {
       { gmail: normalizedEmail },
       {
         $set: { otp, otpExpiry },
-        $setOnInsert: { gmail: normalizedEmail },
+        $setOnInsert: {
+          gmail: normalizedEmail,
+          ...(normalizedRole ? { role: normalizedRole } : {}),
+        },
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
@@ -45,14 +56,14 @@ const transporter = nodemailer.createTransport({
 
 const sendOtp2Email = async (req, res) => {
   try {
-    const { email, gmail } = req?.body || {};
+    const { email, gmail, role } = req?.body || {};
     const userEmail = normalizeEmail(email || gmail);
 
     if (!userEmail) {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    const { user, otp } = await makeOtp(userEmail);
+    const { user, otp } = await makeOtp(userEmail, role);
     if (!user) {
       return res
         .status(500)
@@ -165,7 +176,7 @@ const verifyOtp = async (req, res) => {
       { isLoggedin: true, otp: undefined, otpExpiry: undefined }
     );
 
-    const role = user.role || 'user';
+    const role = user.role || 'donor';
     const tokenPayload = {
       _id: user._id,
       role,

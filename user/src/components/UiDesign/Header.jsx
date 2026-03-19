@@ -10,7 +10,7 @@ export default function Header() {
   return (
     <div className="w-full fixed top-0 left-0 z-50">
       {/* Navbar Container */}
-      <nav className="flex justify-between items-center px-6 md:px-12 py-4 bg-[#f1f1f1] backdrop-blur-md border-b border-gray-200">
+      <nav className="flex justify-between items-center px-6 md:px-12 py-4 bg-[var(--bg-soft)] backdrop-blur-md border-b border-slate-200">
         {/* Logo - Use Link to return home */}
         <Link
           to="/"
@@ -46,6 +46,12 @@ export default function Header() {
             Pending Request
           </Link>
           <Link
+            to="/login"
+            className="text-slate-800 font-bold hover:text-red-600 transition text-sm uppercase"
+          >
+            Login
+          </Link>
+          <Link
             to="/testimonials"
             className="text-slate-800 font-bold hover:text-red-600 transition text-sm uppercase"
           >
@@ -55,9 +61,12 @@ export default function Header() {
 
         {/* Desktop Button */}
         <div className="hidden lg:block">
-          <button className="bg-slate-900 text-white px-8 py-2.5 rounded-full font-bold hover:bg-red-600 transition-all shadow-md">
-            Make a Sponsor
-          </button>
+          <Link
+            to="/login"
+            className="bg-slate-900 text-white px-8 py-2.5 rounded-full font-bold hover:bg-red-600 transition-all shadow-md inline-flex items-center justify-center"
+          >
+            Login
+          </Link>
         </div>
 
         {/* MOBILE HAMBURGER ICON */}
@@ -93,11 +102,11 @@ export default function Header() {
       <div
         className={`fixed top-0 right-0 w-[80%] h-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden z-60 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        <div className="flex justify-between items-center p-6 border-b border-gray-100">
+        <div className="flex justify-between items-center p-6 border-b border-slate-100">
           <div className="text-2xl font-black text-red-600 italic">JEEVO</div>
           <button
             onClick={closeMenu}
-            className="p-2 text-slate-900 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 text-slate-900 hover:bg-slate-100 rounded-full transition-colors"
           >
             <svg
               className="w-8 h-8"
@@ -120,42 +129,53 @@ export default function Header() {
           <Link
             to="/"
             onClick={closeMenu}
-            className="text-slate-800 font-bold text-xl border-b border-gray-100 pb-3 hover:text-red-600"
+            className="text-slate-800 font-bold text-xl border-b border-slate-100 pb-3 hover:text-red-600"
           >
             Home
           </Link>
           <Link
             to="/services"
             onClick={closeMenu}
-            className="text-slate-800 font-bold text-xl border-b border-gray-100 pb-3 hover:text-red-600"
+            className="text-slate-800 font-bold text-xl border-b border-slate-100 pb-3 hover:text-red-600"
           >
             Service
           </Link>
           <Link
             to="/our-mission"
             onClick={closeMenu}
-            className="text-slate-800 font-bold text-xl border-b border-gray-100 pb-3 hover:text-red-600"
+            className="text-slate-800 font-bold text-xl border-b border-slate-100 pb-3 hover:text-red-600"
           >
             Our Mission
           </Link>
           <Link
             to="/pending-requests"
             onClick={closeMenu}
-            className="text-slate-800 font-bold text-xl border-b border-gray-100 pb-3 hover:text-red-600"
+            className="text-slate-800 font-bold text-xl border-b border-slate-100 pb-3 hover:text-red-600"
           >
             Pending Request
           </Link>
           <Link
+            to="/login"
+            onClick={closeMenu}
+            className="text-slate-800 font-bold text-xl border-b border-slate-100 pb-3 hover:text-red-600"
+          >
+            Login
+          </Link>
+          <Link
             to="/testimonials"
             onClick={closeMenu}
-            className="text-slate-800 font-bold text-xl border-b border-gray-100 pb-3 hover:text-red-600"
+            className="text-slate-800 font-bold text-xl border-b border-slate-100 pb-3 hover:text-red-600"
           >
             Testimonial
           </Link>
 
-          <button className="mt-6 bg-slate-900 text-white py-4 rounded-2xl font-black text-xl shadow-lg hover:bg-red-600 transition active:scale-95">
-            Make a Sponsor
-          </button>
+          <Link
+            to="/login"
+            onClick={closeMenu}
+            className="mt-6 bg-slate-900 text-white py-4 rounded-2xl font-black text-xl shadow-lg hover:bg-red-600 transition active:scale-95 text-center"
+          >
+            Login
+          </Link>
         </div>
       </div>
     </div>

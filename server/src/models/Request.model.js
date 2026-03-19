@@ -81,6 +81,22 @@ const RequestSchema = new Schema(
         default: 'units',
       },
     },
+    urgency: {
+      type: String,
+      enum: ['normal', 'urgent', 'critical'],
+      default: 'normal',
+      index: true,
+    },
+    location: {
+      lat: {
+        type: Number,
+        default: null,
+      },
+      lng: {
+        type: Number,
+        default: null,
+      },
+    },
     enrolledUsers: [
       {
         type: mongoose.Schema.Types.ObjectId,

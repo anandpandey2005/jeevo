@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   Activity,
   AlertCircle,
@@ -12,7 +12,10 @@ import {
   ShieldCheck,
   Target,
   Trophy,
+  Plus,
+  ClipboardList,
 } from 'lucide-react';
+import Toast from '../components/Toast.jsx';
 
 const DEFAULT_STATS = {
   level: 1,
@@ -23,6 +26,32 @@ const DEFAULT_STATS = {
   requestedUnits: 0,
   fulfilledUnits: 0,
 };
+
+const DEFAULT_HISTORY = {
+  created: [],
+  donated: [],
+  createdCount: 0,
+  donatedCount: 0,
+};
+
+const DEFAULT_REQUEST_FORM = {
+  patientName: '',
+  patientPhone: '',
+  hospitalName: '',
+  addressLine1: '',
+  state: '',
+  district: '',
+  pincode: '',
+  bloodGroup: '',
+  quantity: '',
+  unit: 'units',
+  urgency: 'normal',
+  note: '',
+  latitude: '',
+  longitude: '',
+};
+
+const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 const formatDate = (value) => {
   if (!value) return 'N/A';
@@ -37,7 +66,8 @@ const formatDate = (value) => {
 
 const formatAddress = (address = {}) =>
   [
-    address.cityOrTown,
+    address.line1,
+    address.line2,
     address.district,
     address.state,
     address.pincode,
@@ -47,11 +77,26 @@ const formatAddress = (address = {}) =>
 
 export default function UserDashboard() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const focusCreate = searchParams.get('focus') === 'create';
+  const isMe = id === 'me';
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(DEFAULT_STATS);
   const [recentRequests, setRecentRequests] = useState([]);
+  const [history, setHistory] = useState(DEFAULT_HISTORY);
+  const [profileForm, setProfileForm] = useState(null);
+  const [profileMessage, setProfileMessage] = useState('');
+  const [profileError, setProfileError] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [requestForm, setRequestForm] = useState(DEFAULT_REQUEST_FORM);
+  const [creatingRequest, setCreatingRequest] = useState(false);
+  const [locatingRequest, setLocatingRequest] = useState(false);
+  const [requestError, setRequestError] = useState('');
+  const [requestSuccess, setRequestSuccess] = useState('');
 
   const fetchDashboardData = useCallback(async () => {
     if (!id) {
@@ -64,12 +109,12 @@ export default function UserDashboard() {
     setError('');
 
     try {
-      const response = await fetch(
-        `/api/user/dashboard/${encodeURIComponent(id)}`,
-        {
-          credentials: 'include',
-        }
-      );
+      const endpoint = isMe
+        ? '/api/user/me'
+        : `/api/user/dashboard/${encodeURIComponent(id)}`;
+      const response = await fetch(endpoint, {
+        credentials: 'include',
+      });
 
       let payload = null;
       try {
@@ -79,6 +124,9 @@ export default function UserDashboard() {
       }
 
       if (!response.ok || !payload?.success) {
+        if (response.status === 401 && isMe) {
+          throw new Error('Please login to access your dashboard.');
+        }
         throw new Error(payload?.message || 'Failed to load dashboard data.');
       }
 
@@ -88,27 +136,163 @@ export default function UserDashboard() {
       setRecentRequests(
         Array.isArray(data.recentRequests) ? data.recentRequests : []
       );
+      if (data.history) {
+        setHistory({ ...DEFAULT_HISTORY, ...data.history });
+      }
+      if (isMe && data.user) {
+        setProfileForm({
+          firstName: data.user?.name?.first || '',
+          lastName: data.user?.name?.last || '',
+          image: data.user?.image || '',
+          bloodGroup: data.user?.bloodGroup || '',
+          phoneNumber: data.user?.phone?.number || '',
+          phoneCountry: data.user?.phone?.country || '+91',
+          addressLine1: data.user?.address?.line1 || '',
+          addressLine2: data.user?.address?.line2 || '',
+          state: data.user?.address?.state || '',
+          district: data.user?.address?.district || '',
+          pincode: data.user?.address?.pincode || '',
+          country: data.user?.address?.country || '',
+        });
+      }
     } catch (fetchError) {
       setError(fetchError?.message || 'Unable to fetch dashboard data.');
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, isMe]);
 
   useEffect(() => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
+  useEffect(() => {
+    if (focusCreate && isMe && !loading) {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+  }, [focusCreate, isMe, loading]);
+
+  const handleProfileChange = (field) => (event) => {
+    setProfileForm((prev) => ({ ...prev, [field]: event.target.value }));
+  };
+
+  const handleSaveProfile = async (event) => {
+    event.preventDefault();
+    if (!profileForm) return;
+    setSavingProfile(true);
+    setProfileError('');
+    setProfileMessage('');
+
+    try {
+      const response = await fetch('/api/user/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(profileForm),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || !payload?.success) {
+        throw new Error(payload?.message || 'Failed to update profile.');
+      }
+      setProfileMessage('Profile updated successfully.');
+      setUser(payload?.data || user);
+    } catch (saveError) {
+      setProfileError(saveError?.message || 'Unable to update profile.');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleRequestChange = (field) => (event) => {
+    setRequestForm((prev) => ({ ...prev, [field]: event.target.value }));
+  };
+
+  const handleCreateRequest = async (event) => {
+    event.preventDefault();
+    setCreatingRequest(true);
+    setRequestError('');
+    setRequestSuccess('');
+
+    try {
+      const requestPayload = {
+        ...requestForm,
+        quantity: requestForm.quantity ? Number(requestForm.quantity) : 0,
+        latitude: requestForm.latitude ? Number(requestForm.latitude) : undefined,
+        longitude: requestForm.longitude ? Number(requestForm.longitude) : undefined,
+      };
+      const response = await fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(requestPayload),
+      });
+
+      const responsePayload = await response.json().catch(() => null);
+      if (!response.ok || !responsePayload?.success) {
+        throw new Error(
+          responsePayload?.message || 'Failed to create request.'
+        );
+      }
+
+      setRequestSuccess('Request created successfully.');
+      setRequestForm(DEFAULT_REQUEST_FORM);
+      fetchDashboardData();
+    } catch (createError) {
+      setRequestError(createError?.message || 'Unable to create request.');
+    } finally {
+      setCreatingRequest(false);
+    }
+  };
+
+  const handleRequestLocation = () => {
+    if (!navigator.geolocation) {
+      setRequestError('Geolocation is not supported on this device.');
+      return;
+    }
+    setLocatingRequest(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setRequestForm((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude.toFixed(6),
+          longitude: position.coords.longitude.toFixed(6),
+        }));
+        setRequestSuccess('Location captured successfully.');
+        setLocatingRequest(false);
+      },
+      () => {
+        setRequestError('Unable to fetch your location.');
+        setLocatingRequest(false);
+      },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  };
+
+  const handleManageRequests = () => {
+    navigate('/pending-requests?view=mine');
+  };
+
   const fullName = useMemo(() => {
-    const firstName = user?.fullName?.firstName || '';
-    const lastName = user?.fullName?.lastName || '';
+    const firstName = user?.name?.first || '';
+    const lastName = user?.name?.last || '';
     return `${firstName} ${lastName}`.trim() || 'Unnamed Hero';
   }, [user]);
 
   const avatarUrl = useMemo(() => {
-    if (user?.avatar) return user.avatar;
+    if (user?.image) return user.image;
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=dc2626&color=ffffff`;
   }, [fullName, user]);
+
+  const toastMessage =
+    requestError || requestSuccess || profileError || profileMessage;
+  const toastType =
+    requestError || profileError ? 'error' : 'success';
+  const clearToast = () => {
+    setRequestError('');
+    setRequestSuccess('');
+    setProfileError('');
+    setProfileMessage('');
+  };
 
   if (loading) {
     return (
@@ -159,7 +343,7 @@ export default function UserDashboard() {
     : 'bg-amber-100 text-amber-700 border-amber-200';
 
   return (
-    <div className="w-full min-h-screen bg-slate-100 text-slate-900 m-auto pt-15">
+    <div className="w-full min-h-screen bg-[var(--bg-soft)] text-slate-900 m-auto pt-15">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <header className="mb-8 rounded-3xl bg-gradient-to-r from-red-600 via-red-500 to-orange-500 p-6 text-white shadow-xl">
           <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
@@ -171,14 +355,26 @@ export default function UserDashboard() {
               <h1 className="text-2xl font-black sm:text-3xl">{fullName}</h1>
               <p className="mt-2 text-sm text-red-50">{user._id}</p>
             </div>
-            <button
-              type="button"
-              onClick={fetchDashboardData}
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-bold text-slate-900 transition hover:bg-slate-100"
-            >
-              <RefreshCw size={15} />
-              Refresh
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              {isMe && (
+                <button
+                  type="button"
+                  onClick={handleManageRequests}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/20"
+                >
+                  <ClipboardList size={15} />
+                  Manage Requests
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={fetchDashboardData}
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-bold text-slate-900 transition hover:bg-slate-100"
+              >
+                <RefreshCw size={15} />
+                Refresh
+              </button>
+            </div>
           </div>
         </header>
 
@@ -215,7 +411,11 @@ export default function UserDashboard() {
               <div className="space-y-3 text-sm text-slate-600">
                 <p className="inline-flex items-start gap-2">
                   <Phone size={16} className="mt-0.5 text-slate-400" />
-                  <span>{user.phone || 'Phone not added'}</span>
+                  <span>
+                    {user?.phone?.number
+                      ? `${user.phone?.country || ''} ${user.phone.number}`.trim()
+                      : 'Phone not added'}
+                  </span>
                 </p>
                 <p className="inline-flex items-start gap-2">
                   <MapPin size={16} className="mt-0.5 text-slate-400" />
@@ -300,9 +500,13 @@ export default function UserDashboard() {
                 <div className="space-y-3">
                   {recentRequests.map((request) => {
                     const statusClass =
-                      request.status === 'Closed'
+                      request.status === 'closed'
                         ? 'border-emerald-200 bg-emerald-100 text-emerald-700'
                         : 'border-amber-200 bg-amber-100 text-amber-700';
+
+                    const statusLabel =
+                      request.status?.charAt(0).toUpperCase() +
+                        request.status?.slice(1) || 'Pending';
 
                     return (
                       <article
@@ -311,23 +515,27 @@ export default function UserDashboard() {
                       >
                         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                           <h4 className="text-sm font-bold text-slate-900">
-                            {request.patientName}
+                            {request.patientDetails?.name || 'Unknown patient'}
                           </h4>
                           <span
                             className={`rounded-full border px-3 py-1 text-xs font-semibold ${statusClass}`}
                           >
-                            {request.status}
+                            {statusLabel}
                           </span>
                         </div>
                         <div className="grid gap-2 text-xs text-slate-600 sm:grid-cols-2">
-                          <p>Blood Type: {request.bloodType}</p>
                           <p>
-                            Units: {request.unitFullFilled || 0}/
-                            {request.unitsRequired || 0}
+                            Blood Type:{' '}
+                            {request.requirement?.bloodGroup || 'N/A'}
                           </p>
                           <p>
-                            Location:{' '}
-                            {request.customAddress?.cityOrTown || 'Not available'}
+                            Units: {request.requirement?.quantity || 0}{' '}
+                            {request.requirement?.unit || ''}
+                          </p>
+                          <p>
+                            Hospital:{' '}
+                            {request.patientDetails?.address?.hospitalName ||
+                              'Not available'}
                           </p>
                           <p>Created: {formatDate(request.createdAt)}</p>
                         </div>
@@ -337,9 +545,331 @@ export default function UserDashboard() {
                 </div>
               )}
             </section>
+
+            {isMe && profileForm && (
+              <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-base font-black text-slate-900">
+                    Manage Profile
+                  </h3>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Keep details updated
+                  </p>
+                </div>
+                <form
+                  onSubmit={handleSaveProfile}
+                  className="grid gap-4 md:grid-cols-2"
+                >
+                  <input
+                    value={profileForm.firstName}
+                    onChange={handleProfileChange('firstName')}
+                    placeholder="First Name"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.lastName}
+                    onChange={handleProfileChange('lastName')}
+                    placeholder="Last Name"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.image}
+                    onChange={handleProfileChange('image')}
+                    placeholder="Profile Image URL"
+                    className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <select
+                    value={profileForm.bloodGroup}
+                    onChange={handleProfileChange('bloodGroup')}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  >
+                    <option value="">Blood Group</option>
+                    {BLOOD_GROUPS.map((group) => (
+                      <option key={group} value={group}>
+                        {group}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    value={profileForm.phoneCountry}
+                    onChange={handleProfileChange('phoneCountry')}
+                    placeholder="Country Code"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.phoneNumber}
+                    onChange={handleProfileChange('phoneNumber')}
+                    placeholder="Phone Number"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.addressLine1}
+                    onChange={handleProfileChange('addressLine1')}
+                    placeholder="Address Line 1"
+                    className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.addressLine2}
+                    onChange={handleProfileChange('addressLine2')}
+                    placeholder="Address Line 2"
+                    className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.district}
+                    onChange={handleProfileChange('district')}
+                    placeholder="District"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.state}
+                    onChange={handleProfileChange('state')}
+                    placeholder="State"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.pincode}
+                    onChange={handleProfileChange('pincode')}
+                    placeholder="Pincode"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={profileForm.country}
+                    onChange={handleProfileChange('country')}
+                    placeholder="Country"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+
+                  <div className="md:col-span-2 flex flex-wrap gap-3">
+                    <button
+                      type="submit"
+                      disabled={savingProfile}
+                      className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-slate-400"
+                    >
+                      <ShieldCheck size={16} />
+                      {savingProfile ? 'Saving...' : 'Save Profile'}
+                    </button>
+                  </div>
+                </form>
+              </section>
+            )}
+
+            {isMe && (
+              <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                <div className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-wide text-slate-500">
+                  <Plus size={16} />
+                  Raise a Request
+                </div>
+                <form
+                  onSubmit={handleCreateRequest}
+                  className="grid gap-4 md:grid-cols-2"
+                >
+                  <input
+                    value={requestForm.patientName}
+                    onChange={handleRequestChange('patientName')}
+                    placeholder="Patient Name"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  />
+                  <input
+                    value={requestForm.patientPhone}
+                    onChange={handleRequestChange('patientPhone')}
+                    placeholder="Patient Phone"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  />
+                  <input
+                    value={requestForm.hospitalName}
+                    onChange={handleRequestChange('hospitalName')}
+                    placeholder="Hospital Name"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  />
+                  <input
+                    value={requestForm.addressLine1}
+                    onChange={handleRequestChange('addressLine1')}
+                    placeholder="Hospital Address"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  />
+                  <input
+                    value={requestForm.state}
+                    onChange={handleRequestChange('state')}
+                    placeholder="State"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  />
+                  <input
+                    value={requestForm.district}
+                    onChange={handleRequestChange('district')}
+                    placeholder="District"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  />
+                  <input
+                    value={requestForm.pincode}
+                    onChange={handleRequestChange('pincode')}
+                    placeholder="Pincode"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  />
+                  <select
+                    value={requestForm.bloodGroup}
+                    onChange={handleRequestChange('bloodGroup')}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  >
+                    <option value="">Select Blood Group</option>
+                    {BLOOD_GROUPS.map((group) => (
+                      <option key={group} value={group}>
+                        {group}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    value={requestForm.quantity}
+                    onChange={handleRequestChange('quantity')}
+                    placeholder="Quantity Needed"
+                    type="number"
+                    min="1"
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    required
+                  />
+                  <select
+                    value={requestForm.unit}
+                    onChange={handleRequestChange('unit')}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  >
+                    <option value="units">Units</option>
+                    <option value="ml">ML</option>
+                    <option value="liters">Liters</option>
+                  </select>
+                  <select
+                    value={requestForm.urgency}
+                    onChange={handleRequestChange('urgency')}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                  >
+                    <option value="normal">Normal</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="critical">Critical</option>
+                  </select>
+                  <textarea
+                    value={requestForm.note}
+                    onChange={handleRequestChange('note')}
+                    placeholder="Additional notes"
+                    className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 outline-none focus:border-red-500"
+                    rows={3}
+                  />
+                  <div className="md:col-span-2 flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleRequestLocation}
+                      className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-slate-300"
+                      disabled={locatingRequest}
+                    >
+                      <MapPin size={14} />
+                      {locatingRequest ? 'Locating...' : 'Use My Location'}
+                    </button>
+                    <input
+                      value={requestForm.latitude}
+                      onChange={handleRequestChange('latitude')}
+                      placeholder="Latitude"
+                      className="min-w-[120px] flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-red-500"
+                    />
+                    <input
+                      value={requestForm.longitude}
+                      onChange={handleRequestChange('longitude')}
+                      placeholder="Longitude"
+                      className="min-w-[120px] flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-red-500"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={creatingRequest}
+                    className="md:col-span-2 inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-slate-400"
+                  >
+                    {creatingRequest ? 'Creating...' : 'Create Request'}
+                  </button>
+                </form>
+              </section>
+            )}
+
+            {isMe && (
+              <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-base font-black text-slate-900">
+                    Donation History
+                  </h3>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {history.createdCount} requests | {history.donatedCount}{' '}
+                    donations
+                  </p>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                      Recent Requests
+                    </p>
+                    {history.created?.length ? (
+                      <div className="mt-3 space-y-2 text-xs text-slate-600">
+                        {history.created.map((item) => (
+                          <div
+                            key={item._id}
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-2"
+                          >
+                            <p className="text-sm font-bold text-slate-900">
+                              {item.patientDetails?.name || 'Unknown patient'}
+                            </p>
+                            <p>
+                              {item.requirement?.bloodGroup || 'N/A'} ·{' '}
+                              {item.requirement?.quantity || 0}{' '}
+                              {item.requirement?.unit || ''}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-3 text-xs text-slate-500">
+                        No requests created yet.
+                      </p>
+                    )}
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                      Recent Donations
+                    </p>
+                    {history.donated?.length ? (
+                      <div className="mt-3 space-y-2 text-xs text-slate-600">
+                        {history.donated.map((item) => (
+                          <div
+                            key={item._id}
+                            className="rounded-xl border border-slate-200 bg-white px-3 py-2"
+                          >
+                            <p className="text-sm font-bold text-slate-900">
+                              {item.patientDetails?.name || 'Unknown patient'}
+                            </p>
+                            <p>
+                              {item.requirement?.bloodGroup || 'N/A'} ·{' '}
+                              {item.requirement?.quantity || 0}{' '}
+                              {item.requirement?.unit || ''}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-3 text-xs text-slate-500">
+                        No donations recorded yet.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </section>
+            )}
           </section>
         </div>
       </div>
+      {toastMessage && (
+        <Toast message={toastMessage} type={toastType} onClose={clearToast} />
+      )}
     </div>
   );
 }
