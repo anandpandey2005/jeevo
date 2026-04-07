@@ -1,7 +1,0 @@
-{
-    "accessibility.signals.lineHasError": {
-        "sound": "on"
-    },
-    "C_Cpp.windowsErrorReportingMode": "default",
-    "markdown.editor.filePaste.audioSnippet": "<audio controls src=\"${\"C:\\Users\\anand\\Downloads\\ma-ka-bhosda-aag.mp3\"}\" title=\"${title}\"></audio>"
-}
