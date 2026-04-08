@@ -217,11 +217,38 @@ export const AuthProvider = ({ children }) => {
   // Forgot password
   const forgotPassword = useCallback(async (email) => {
     try {
-      await api.post('/auth/forgot-password', { email });
+      const normalizedEmail = (email || '').toString().trim().toLowerCase();
+      await api.post('/auth/forgot-password', { email: normalizedEmail });
       toast.success('Password reset email sent');
       return { success: true };
     } catch (error) {
       const message = error.response?.data?.message || 'Request failed';
+      toast.error(message);
+      return { success: false, message };
+    }
+  }, []);
+
+  const requestEmailOtp = useCallback(async (email) => {
+    try {
+      const normalizedEmail = (email || '').toString().trim().toLowerCase();
+      const response = await api.post('/auth/request-otp', { email: normalizedEmail });
+      toast.success('Verification code sent to your email');
+      return { success: true, ...response.data };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to send verification code';
+      toast.error(message);
+      return { success: false, message };
+    }
+  }, []);
+
+  const verifyEmailOtp = useCallback(async (email, otp) => {
+    try {
+      const normalizedEmail = (email || '').toString().trim().toLowerCase();
+      const response = await api.post('/auth/verify-otp', { email: normalizedEmail, otp });
+      toast.success('Email verified successfully');
+      return { success: true, ...response.data };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Verification failed';
       toast.error(message);
       return { success: false, message };
     }
@@ -263,6 +290,8 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     changePassword,
     forgotPassword,
+    requestEmailOtp,
+    verifyEmailOtp,
     refreshUser,
     setDonorProfile
   };

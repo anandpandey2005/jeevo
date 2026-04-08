@@ -250,6 +250,28 @@ const templates = {
       </div>
     `
   }),
+  emailOtp: ({ code, expiresInMinutes }) => ({
+    subject: 'Your Jeevo verification code',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #0e7490, #0891b2); padding: 30px; text-align: center;">
+          <h1 style="color: white; margin: 0;">Email Verification</h1>
+        </div>
+        <div style="padding: 30px; background: #f9fafb;">
+          <h2 style="color: #1f2937;">Your verification code</h2>
+          <p style="color: #4b5563; line-height: 1.6;">
+            Use the code below to verify your email address and continue creating your Jeevo account.
+          </p>
+          <div style="background: #0f172a; color: white; font-size: 28px; letter-spacing: 6px; text-align: center; padding: 16px; border-radius: 10px; margin: 24px 0;">
+            ${code}
+          </div>
+          <p style="color: #6b7280; font-size: 14px;">
+            This code expires in ${expiresInMinutes} minutes. If you didn't request this, you can ignore this email.
+          </p>
+        </div>
+      </div>
+    `
+  }),
   loginAlert: ({ user, meta }) => ({
     subject: 'New login to your Jeevo account',
     html: `
@@ -315,7 +337,12 @@ const sendEmail = async (to, template, data) => {
     }
 
     const transporter = createTransporter();
-    const { subject, html } = templates[template](data);
+    const templateFn = templates[template];
+    if (!templateFn) {
+      throw new Error(`Email template '${template}' not found`);
+    }
+
+    const { subject, html } = Array.isArray(data) ? templateFn(...data) : templateFn(data);
 
     const mailOptions = {
       from: `"Jeevo" <${process.env.SMTP_USER}>`,

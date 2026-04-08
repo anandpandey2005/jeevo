@@ -23,6 +23,7 @@ const registerValidation = [
     .normalizeEmail()
     .withMessage('Please provide a valid email'),
   body('phone')
+    .customSanitizer((value) => (value || '').toString().trim().replace(/[\s-]/g, ''))
     .matches(/^[+]?[0-9]{10,15}$/)
     .withMessage('Please provide a valid phone number'),
   body('password')
@@ -42,6 +43,29 @@ const registerValidation = [
     .optional()
     .isIn(['user', 'donor', 'receiver', 'hospital'])
     .withMessage('Invalid role'),
+  validate
+];
+
+// Email OTP Request Validation
+const emailOtpRequestValidation = [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email'),
+  validate
+];
+
+// Email OTP Verify Validation
+const emailOtpVerifyValidation = [
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email'),
+  body('otp')
+    .isLength({ min: 6, max: 6 })
+    .withMessage('OTP must be 6 digits')
+    .matches(/^\d{6}$/)
+    .withMessage('OTP must be numeric'),
   validate
 ];
 
@@ -198,6 +222,8 @@ module.exports = {
   validate,
   registerValidation,
   loginValidation,
+  emailOtpRequestValidation,
+  emailOtpVerifyValidation,
   donorProfileValidation,
   bloodRequestValidation,
   hospitalValidation,

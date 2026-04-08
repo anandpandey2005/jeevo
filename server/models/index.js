@@ -6,6 +6,7 @@ const BloodStock = require('./BloodStock');
 const Donation = require('./Donation');
 const Notification = require('./Notification');
 const Schedule = require('./Schedule');
+const EmailOtp = require('./EmailOtp');
 
 module.exports = {
   User,
@@ -15,5 +16,6 @@ module.exports = {
   BloodStock,
   Donation,
   Notification,
-  Schedule
+  Schedule,
+  EmailOtp
 };

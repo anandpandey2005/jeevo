@@ -159,6 +159,8 @@ app.get('/api', (req, res) => {
     description: 'Blood Donation Management Platform API',
     endpoints: {
       auth: {
+        'POST /api/auth/request-otp': 'Request email OTP',
+        'POST /api/auth/verify-otp': 'Verify email OTP',
         'POST /api/auth/register': 'Register new user',
         'POST /api/auth/login': 'Login user',
         'GET /api/auth/me': 'Get current user',

@@ -49,6 +49,23 @@ async function registerAndLogin(role, firstName, lastName, extra = {}) {
   const phone = `+91${Math.floor(7000000000 + Math.random() * 2000000000)}`;
   const password = 'TestPass123';
 
+  const otpRequest = await api('/auth/request-otp', {
+    method: 'POST',
+    body: JSON.stringify({ email })
+  });
+  assert(otpRequest.ok, `${role} otp request`, otpRequest);
+
+  const otpCode = otpRequest.data?.otp;
+  if (!otpCode) {
+    fail('OTP code not returned. Run smoke tests in development or ensure email OTP is reachable.', otpRequest);
+  }
+
+  const otpVerify = await api('/auth/verify-otp', {
+    method: 'POST',
+    body: JSON.stringify({ email, otp: otpCode })
+  });
+  assert(otpVerify.ok && otpVerify.data && otpVerify.data.otpToken, `${role} otp verify`, otpVerify);
+
   const register = await api('/auth/register', {
     method: 'POST',
     body: JSON.stringify({
@@ -58,6 +75,7 @@ async function registerAndLogin(role, firstName, lastName, extra = {}) {
       firstName,
       lastName,
       role,
+      otpToken: otpVerify.data.otpToken,
       address: {
         street: 'Smoke Street 1',
         city: 'Kolkata',

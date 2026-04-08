@@ -33,6 +33,24 @@ function assert(cond, msg, payload) {
 
   console.log('--- Hospital Runtime Smoke Test ---');
 
+  const otpRequest = await call('/auth/request-otp', {
+    method: 'POST',
+    body: JSON.stringify({ email })
+  });
+  assert(otpRequest.ok, 'Request signup OTP', otpRequest);
+
+  const otpCode = otpRequest.data?.otp;
+  if (!otpCode) {
+    console.error('FAIL: OTP code not returned. Run smoke tests in development or ensure OTP is reachable.');
+    process.exit(1);
+  }
+
+  const otpVerify = await call('/auth/verify-otp', {
+    method: 'POST',
+    body: JSON.stringify({ email, otp: otpCode })
+  });
+  assert(otpVerify.ok && otpVerify.data && otpVerify.data.otpToken, 'Verify signup OTP', otpVerify);
+
   const registerUser = await call('/auth/register', {
     method: 'POST',
     body: JSON.stringify({
@@ -42,6 +60,7 @@ function assert(cond, msg, payload) {
       firstName: 'Smoke',
       lastName: 'Hospital',
       role: 'hospital',
+      otpToken: otpVerify.data.otpToken,
       address: {
         street: '12 Smoke Street',
         city: 'Kolkata',

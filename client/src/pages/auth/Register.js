@@ -1,30 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 import { FaDroplet, FaEye, FaEyeSlash, FaUser, FaHospital, FaHandHoldingMedical } from 'react-icons/fa6';
 import { HiMail, HiLockClosed, HiUser, HiPhone, HiArrowRight, HiArrowLeft } from 'react-icons/hi';
 
 const Register = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { register: registerUser, loading } = useAuth();
+  const { register: registerUser, requestEmailOtp, verifyEmailOtp, loading } = useAuth();
   
   const [step, setStep] = useState(1);
   const [selectedRole, setSelectedRole] = useState(searchParams.get('role') || null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [otpToken, setOtpToken] = useState(null);
+  const [otpEmail, setOtpEmail] = useState('');
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpVerifying, setOtpVerifying] = useState(false);
+  const [resendCountdown, setResendCountdown] = useState(0);
+
+  const OTP_RESEND_COOLDOWN = 60;
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    trigger
+    trigger,
+    getValues
   } = useForm();
 
   const password = watch('password');
+
+  useEffect(() => {
+    if (resendCountdown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCountdown((value) => Math.max(0, value - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCountdown]);
 
   const roles = [
     {
@@ -61,21 +78,63 @@ const Register = () => {
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
+    setOtpToken(null);
+    setOtpEmail('');
+    setResendCountdown(0);
     setStep(2);
   };
 
-  const handleNext = async () => {
-    const fieldsToValidate = step === 2 
-      ? ['firstName', 'lastName', 'email', 'phone'] 
-      : ['password', 'confirmPassword'];
-    
+  const handleRequestOtp = async () => {
+    const fieldsToValidate = ['firstName', 'lastName', 'email', 'phone'];
+    if (selectedRole === 'donor') {
+      fieldsToValidate.push('bloodGroup');
+    }
+
     const isValid = await trigger(fieldsToValidate);
-    if (isValid) {
-      setStep(step + 1);
+    if (!isValid) return;
+
+    const emailValue = getValues('email');
+    setOtpEmail(emailValue);
+    setOtpSending(true);
+    const result = await requestEmailOtp(emailValue);
+    setOtpSending(false);
+
+    if (result?.success) {
+      setResendCountdown(OTP_RESEND_COOLDOWN);
+      setStep(3);
+    }
+  };
+
+  const handleVerifyOtp = async (data) => {
+    const emailValue = getValues('email');
+    setOtpVerifying(true);
+    const result = await verifyEmailOtp(emailValue, data.otp);
+    setOtpVerifying(false);
+
+    if (result?.success && result?.otpToken) {
+      setOtpToken(result.otpToken);
+      setStep(4);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCountdown > 0 || otpSending) return;
+    const emailValue = getValues('email');
+    setOtpSending(true);
+    const result = await requestEmailOtp(emailValue);
+    setOtpSending(false);
+    if (result?.success) {
+      setResendCountdown(OTP_RESEND_COOLDOWN);
     }
   };
 
   const onSubmit = async (data) => {
+    if (!otpToken) {
+      toast.error('Please verify your email before creating a password.');
+      setStep(3);
+      return;
+    }
+
     const userData = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -83,6 +142,7 @@ const Register = () => {
       phone: data.phone,
       password: data.password,
       role: selectedRole,
+      otpToken,
       ...(selectedRole === 'donor' && { bloodGroup: data.bloodGroup })
     };
 
@@ -119,10 +179,10 @@ const Register = () => {
           {/* Progress Steps */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              {[1, 2, 3].map((s) => (
+              {[1, 2, 3, 4].map((s) => (
                 <div
                   key={s}
-                  className={`flex items-center ${s < 3 ? 'flex-1' : ''}`}
+                  className={`flex items-center ${s < 4 ? 'flex-1' : ''}`}
                 >
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
@@ -133,7 +193,7 @@ const Register = () => {
                   >
                     {s}
                   </div>
-                  {s < 3 && (
+                  {s < 4 && (
                     <div
                       className={`flex-1 h-1 mx-2 rounded transition-colors ${
                         step > s ? 'bg-primary-600' : 'bg-gray-200'
@@ -146,7 +206,8 @@ const Register = () => {
             <div className="flex justify-between text-sm">
               <span className={step >= 1 ? 'text-primary-600 font-medium' : 'text-gray-500'}>Role</span>
               <span className={step >= 2 ? 'text-primary-600 font-medium' : 'text-gray-500'}>Info</span>
-              <span className={step >= 3 ? 'text-primary-600 font-medium' : 'text-gray-500'}>Security</span>
+              <span className={step >= 3 ? 'text-primary-600 font-medium' : 'text-gray-500'}>Verify</span>
+              <span className={step >= 4 ? 'text-primary-600 font-medium' : 'text-gray-500'}>Security</span>
             </div>
           </div>
 
@@ -207,7 +268,12 @@ const Register = () => {
               animate={{ opacity: 1, x: 0 }}
             >
               <button
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setOtpToken(null);
+                  setOtpEmail('');
+                  setResendCountdown(0);
+                  setStep(1);
+                }}
                 className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
               >
                 <HiArrowLeft className="mr-2" />
@@ -230,7 +296,7 @@ const Register = () => {
                         type="text"
                         {...register('firstName', { required: 'First name is required' })}
                         className={`input pl-11 ${errors.firstName ? 'border-red-500' : ''}`}
-                        placeholder="John"
+                        placeholder="first name"
                       />
                     </div>
                     {errors.firstName && (
@@ -245,7 +311,7 @@ const Register = () => {
                       type="text"
                       {...register('lastName', { required: 'Last name is required' })}
                       className={`input ${errors.lastName ? 'border-red-500' : ''}`}
-                      placeholder="Doe"
+                      placeholder="last name / surname"
                     />
                     {errors.lastName && (
                       <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
@@ -270,7 +336,7 @@ const Register = () => {
                         }
                       })}
                       className={`input pl-11 ${errors.email ? 'border-red-500' : ''}`}
-                      placeholder="john@example.com"
+                      placeholder="mygmail@gmail.com"
                     />
                   </div>
                   {errors.email && (
@@ -295,7 +361,7 @@ const Register = () => {
                         }
                       })}
                       className={`input pl-11 ${errors.phone ? 'border-red-500' : ''}`}
-                      placeholder="+1 234 567 8900"
+                      placeholder="+91 1234567890"
                     />
                   </div>
                   {errors.phone && (
@@ -337,26 +403,109 @@ const Register = () => {
 
                 <motion.button
                   type="button"
-                  onClick={handleNext}
+                  onClick={handleRequestOtp}
+                  disabled={otpSending}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   className="btn-primary w-full py-3 flex items-center justify-center gap-2 group mt-6"
                 >
-                  Continue
+                  {otpSending ? 'Sending Code...' : 'Continue'}
                   <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </motion.button>
               </form>
             </motion.div>
           )}
 
-          {/* Step 3: Password */}
+          {/* Step 3: Email Verification */}
           {step === 3 && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
             >
               <button
-                onClick={() => setStep(2)}
+                onClick={() => {
+                  setOtpToken(null);
+                  setStep(2);
+                }}
+                className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+              >
+                <HiArrowLeft className="mr-2" />
+                Back
+              </button>
+
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Verify Your Email</h1>
+              <p className="text-gray-600 mb-6">
+                Enter the 6-digit code we sent to {otpEmail || 'your email'}.
+              </p>
+
+              <form onSubmit={handleSubmit(handleVerifyOtp)} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Verification Code
+                  </label>
+                  <div className="relative">
+                    <HiLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      {...register('otp', {
+                        required: 'Verification code is required',
+                        pattern: {
+                          value: /^\d{6}$/,
+                          message: 'Enter a valid 6-digit code'
+                        }
+                      })}
+                      className={`input pl-11 ${errors.otp ? 'border-red-500' : ''}`}
+                      placeholder="Enter 6-digit code"
+                    />
+                  </div>
+                  {errors.otp && (
+                    <p className="mt-1 text-sm text-red-600">{errors.otp.message}</p>
+                  )}
+                </div>
+
+                <motion.button
+                  type="submit"
+                  disabled={otpVerifying}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="btn-primary w-full py-3 flex items-center justify-center gap-2 group mt-6"
+                >
+                  {otpVerifying ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      Verify Email
+                      <HiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
+                </motion.button>
+
+                <div className="text-center text-sm text-gray-600">
+                  {resendCountdown > 0 ? (
+                    <span>Resend code in {resendCountdown}s</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      className="text-primary-600 hover:text-primary-700 font-semibold"
+                    >
+                      Resend code
+                    </button>
+                  )}
+                </div>
+              </form>
+            </motion.div>
+          )}
+
+          {/* Step 4: Password */}
+          {step === 4 && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <button
+                onClick={() => setStep(3)}
                 className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
               >
                 <HiArrowLeft className="mr-2" />

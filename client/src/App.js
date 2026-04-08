@@ -12,6 +12,7 @@ const LandingPage = lazy(() => import('./pages/Landing'));
 const LoginPage = lazy(() => import('./pages/auth/Login'));
 const RegisterPage = lazy(() => import('./pages/auth/Register'));
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage'));
 
 // Dashboards
 const DonorDashboard = lazy(() => import('./pages/donor/DonorDashboard'));
@@ -89,6 +90,7 @@ function App() {
         <Route path="/login" element={user ? <Navigate to={getDashboardPath()} /> : <LoginPage />} />
         <Route path="/register" element={user ? <Navigate to={getDashboardPath()} /> : <RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         
         {/* Public pages that work with or without auth */}
         <Route path="/hospitals" element={<Layout><HospitalList /></Layout>} />
