@@ -3,8 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
-import { FaDroplet, FaEye, FaEyeSlash } from 'react-icons/fa6';
-import { HiMail, HiLockClosed, HiArrowRight } from 'react-icons/hi';
+import { FaEye, FaEyeSlash } from 'react-icons/fa6';
+import { HiMail, HiLockClosed, HiArrowRight, HiCheck } from 'react-icons/hi';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,8 +48,7 @@ const Login = () => {
         >
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 mb-8">
-            <FaDroplet className="h-8 w-8 text-primary-600" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+            <span className="text-2xl font-semibold tracking-[0.3em] uppercase text-gray-900">
               Jeevo
             </span>
           </Link>
@@ -163,12 +162,15 @@ const Login = () => {
       </div>
 
       {/* Right Side - Image/Illustration */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary-600 to-primary-800 items-center justify-center p-12 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`
-          }} />
+      <div className="hidden lg:flex flex-1 bg-black items-center justify-center p-12 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.08), transparent 40%), radial-gradient(circle at 50% 80%, rgba(255,255,255,0.08), transparent 45%)"
+            }}
+          />
         </div>
 
         <motion.div
@@ -177,47 +179,31 @@ const Login = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="relative text-center text-white max-w-lg"
         >
-          {/* Blood Drop Animation */}
-          <motion.div
-            animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="mb-8"
-          >
-            <svg width="120" height="150" viewBox="0 0 120 150" className="mx-auto drop-shadow-2xl">
-              <defs>
-                <linearGradient id="loginBloodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FCA5A5" />
-                  <stop offset="50%" stopColor="#F87171" />
-                  <stop offset="100%" stopColor="#EF4444" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M60 10 C60 10 15 75 15 100 C15 130 35 145 60 145 C85 145 105 130 105 100 C105 75 60 10 60 10"
-                fill="url(#loginBloodGradient)"
-              />
-              <ellipse cx="45" cy="85" rx="12" ry="18" fill="rgba(255,255,255,0.25)" transform="rotate(-15 45 85)" />
-            </svg>
-          </motion.div>
-
-          <h2 className="text-3xl font-bold mb-4">Save Lives Today</h2>
-          <p className="text-primary-100 text-lg mb-8">
-            Every donation matters. Join our community of heroes making a difference 
-            in people's lives every single day.
+          <h1 className="text-5xl md:text-6xl mb-6 font-semibold tracking-[0.3em] uppercase">
+            JEEVO
+          </h1>
+          <p className="text-gray-300 text-lg mb-10">
+            Locate. Donate. Celebrate.
           </p>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <p className="text-3xl font-bold">15K+</p>
-              <p className="text-primary-200 text-sm">Lives Saved</p>
+          <div className="space-y-4 text-left">
+            <div className="flex items-center gap-4 bg-white/10 rounded-xl p-4">
+              <div className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
+                <HiCheck className="text-white" />
+              </div>
+              <p className="text-gray-200">Secure access to verified donor networks</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <p className="text-3xl font-bold">8.5K</p>
-              <p className="text-primary-200 text-sm">Active Donors</p>
+            <div className="flex items-center gap-4 bg-white/10 rounded-xl p-4">
+              <div className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
+                <HiCheck className="text-white" />
+              </div>
+              <p className="text-gray-200">Faster response when every second matters</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <p className="text-3xl font-bold">450+</p>
-              <p className="text-primary-200 text-sm">Hospitals</p>
+            <div className="flex items-center gap-4 bg-white/10 rounded-xl p-4">
+              <div className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
+                <HiCheck className="text-white" />
+              </div>
+              <p className="text-gray-200">Track requests, schedules, and outcomes</p>
             </div>
           </div>
         </motion.div>

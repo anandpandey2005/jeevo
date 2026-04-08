@@ -1,108 +1,139 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin } from 'react-icons/fa6';
-import { HiHeart, HiLocationMarker, HiMail, HiPhone } from 'react-icons/hi';
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FaGithub, FaLinkedin } from "react-icons/fa6";
+import { HiHeart, HiLocationMarker, HiMail, HiPhone } from "react-icons/hi";
 
-const supportEmail = 'pawankr16123114@gmail.com';
+const supportEmail = "pawankr16123114@gmail.com";
 const createMailto = (subject) =>
   `mailto:${supportEmail}?subject=${encodeURIComponent(subject)}`;
 
 const footerSections = [
   {
-    title: 'Explore',
+    title: "Explore",
     links: [
-      { name: 'About Jeevo', path: '/about' },
-      { name: 'How Matching Works', path: '/how-it-works' },
-      { name: 'Find Hospitals and Blood Banks', path: '/hospitals' },
-      { name: 'Upcoming Blood Drives', path: '/schedules' },
-      { name: 'Community Impact Board', path: '/leaderboard' }
-    ]
+      { name: "About Jeevo", path: "/about" },
+      { name: "How Matching Works", path: "/how-it-works" },
+      { name: "Find Hospitals and Blood Banks", path: "/hospitals" },
+      { name: "Upcoming Blood Drives", path: "/schedules" },
+      { name: "Community Impact Board", path: "/leaderboard" },
+    ],
   },
   {
-    title: 'Learn',
+    title: "Learn",
     links: [
-      { name: 'Blood Compatibility Guide', path: '/resources/blood-types' },
-      { name: 'Donation Eligibility Guide', path: '/resources/eligibility' },
-      { name: 'Donation Step-by-Step', path: '/resources/donation-process' },
-      { name: 'Common Questions', path: '/faqs' },
-      { name: 'Updates and Insights', path: '/blog' }
-    ]
+      { name: "Blood Compatibility Guide", path: "/resources/blood-types" },
+      { name: "Donation Eligibility Guide", path: "/resources/eligibility" },
+      { name: "Donation Step-by-Step", path: "/resources/donation-process" },
+      { name: "Common Questions", path: "/faqs" },
+      { name: "Updates and Insights", path: "/blog" },
+    ],
   },
   {
-    title: 'Trust',
+    title: "Trust",
     links: [
-      { name: 'Privacy and Data Use', path: '/privacy' },
-      { name: 'Terms of Service', path: '/terms' },
-      { name: 'Cookie Use', path: '/cookies' },
-      { name: 'Data Protection', path: '/data-protection' }
-    ]
+      { name: "Privacy and Data Use", path: "/privacy" },
+      { name: "Terms of Service", path: "/terms" },
+      { name: "Cookie Use", path: "/cookies" },
+      { name: "Data Protection", path: "/data-protection" },
+    ],
   },
   {
-    title: 'Support',
+    title: "Support",
     links: [
-      { name: 'Help and Troubleshooting', href: createMailto('Jeevo Help Request') },
-      { name: 'Contact Jeevo', href: createMailto('Connect With Jeevo') },
-      { name: 'Report a Bug or Safety Issue', href: createMailto('Jeevo Feedback / Bug Report') },
-      { name: 'Partner for Blood Drives', href: createMailto('Jeevo Partnership Inquiry') }
-    ]
-  }
+      {
+        name: "Help and Troubleshooting",
+        href: createMailto("Jeevo Help Request"),
+      },
+      { name: "Contact Jeevo", href: createMailto("Connect With Jeevo") },
+      {
+        name: "Report a Bug or Safety Issue",
+        href: createMailto("Jeevo Feedback / Bug Report"),
+      },
+      {
+        name: "Partner for Blood Drives",
+        href: createMailto("Jeevo Partnership Inquiry"),
+      },
+    ],
+  },
 ];
 
 const socialLinks = [
-  { name: 'LinkedIn', icon: FaLinkedin, url: 'https://www.linkedin.com/in/anandpandey2005/' },
-  { name: 'GitHub', icon: FaGithub, url: 'https://github.com/anandpandey2005' }
+  {
+    name: "LinkedIn",
+    icon: FaLinkedin,
+    url: "https://www.linkedin.com/in/anandpandey2005/",
+  },
+  {
+    name: "GitHub",
+    icon: FaGithub,
+    url: "https://github.com/anandpandey2005/jeevo",
+  },
 ];
 
 const supportActions = [
   {
-    title: 'Need help now?',
-    description: 'Use the support center for login, request visibility, and workflow help.',
-    href: createMailto('Jeevo Help Request'),
-    cta: 'Open Help Center'
+    title: "Need help now?",
+    description:
+      "Use the support center for login, request visibility, and workflow help.",
+    href: createMailto("Jeevo Help Request"),
+    cta: "Open Help Center",
   },
   {
-    title: 'Found a problem?',
-    description: 'Report bugs, misuse, or broken flows so Jeevo stays safe and dependable.',
-    href: createMailto('Jeevo Feedback / Bug Report'),
-    cta: 'Report an Issue'
+    title: "Found a problem?",
+    description:
+      "Report bugs, misuse, or broken flows so Jeevo stays safe and dependable.",
+    href: createMailto("Jeevo Feedback / Bug Report"),
+    cta: "Report an Issue",
   },
   {
-    title: 'Want to collaborate?',
-    description: 'Connect with us for hospital onboarding, blood drives, or local campaigns.',
-    href: createMailto('Jeevo Partnership Inquiry'),
-    cta: 'Partner With Us'
-  }
+    title: "Want to collaborate?",
+    description:
+      "Connect with us for hospital onboarding, blood drives, or local campaigns.",
+    href: createMailto("Jeevo Partnership Inquiry"),
+    cta: "Partner With Us",
+  },
 ];
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-black opacity-95 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center mb-4">
-              <span className="text-xl font-semibold text-white font-display">Jeevo</span>
+              <span className="text-xl font-semibold text-white font-display">
+                Jeevo
+              </span>
             </Link>
             <p className="text-gray-400 mb-2 leading-relaxed">
-              A blood coordination platform built to reduce delay between urgent need, donor response, and hospital action.
+              A blood coordination platform built to reduce delay between urgent
+              need, donor response, and hospital action.
             </p>
-            <p className="text-gray-200 font-semibold mb-4">Founder Anand Pander</p>
+            <p className="text-gray-200 font-semibold mb-4">
+              Founder Anand Pandey
+            </p>
 
             <div className="space-y-3">
-              <a href="mailto:anandpandey20005@gmail.com" className="flex items-center text-gray-400 hover:text-white transition-colors">
+              <a
+                href="mailto:anandpandey20005@gmail.com"
+                className="flex items-center text-gray-400 hover:text-white transition-colors"
+              >
                 <HiMail className="h-5 w-5 mr-3 text-primary-500" />
-                anandpandey20007@gmail.com
+                anandpandey20005@gmail.com
               </a>
-              <a href="tel:8750309712" className="flex items-center text-gray-400 hover:text-white transition-colors">
+              <a
+                href="tel:8750309712"
+                className="flex items-center text-gray-400 hover:text-white transition-colors"
+              >
                 <HiPhone className="h-5 w-5 mr-3 text-primary-500" />
                 8750309712
               </a>
               <p className="flex items-center text-gray-400">
                 <HiLocationMarker className="h-5 w-5 mr-3 text-primary-500" />
-                5-D Block, Oma Nagar, Meethapur, Badarpur, New Delhi 44
+                N/A
               </p>
             </div>
 
@@ -131,7 +162,10 @@ const Footer = () => {
                 {section.links.map((link) => (
                   <li key={link.name}>
                     {link.href ? (
-                      <a href={link.href} className="text-gray-400 hover:text-white transition-colors leading-relaxed">
+                      <a
+                        href={link.href}
+                        className="text-gray-400 hover:text-white transition-colors leading-relaxed"
+                      >
                         {link.name}
                       </a>
                     ) : (
@@ -154,9 +188,14 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid md:grid-cols-3 gap-4">
             {supportActions.map((action) => (
-              <div key={action.title} className="rounded-2xl border border-gray-800 bg-gray-950/40 p-5">
+              <div
+                key={action.title}
+                className="rounded-2xl border border-gray-800 bg-gray-950/40 p-5"
+              >
                 <h3 className="text-white font-semibold">{action.title}</h3>
-                <p className="text-sm text-gray-400 mt-2 leading-relaxed">{action.description}</p>
+                <p className="text-sm text-gray-400 mt-2 leading-relaxed">
+                  {action.description}
+                </p>
                 <a
                   href={action.href}
                   className="inline-flex items-center mt-4 text-sm font-semibold text-primary-400 hover:text-primary-300 transition-colors"
@@ -175,22 +214,26 @@ const Footer = () => {
             <p className="text-gray-400 text-sm">
               (c) {currentYear} Jeevo. All rights reserved.
             </p>
-            <div className="text-gray-400 text-sm text-center md:text-left">
-              <p className="flex items-center justify-center md:justify-start">
-                Made with <HiHeart className="h-4 w-4 text-primary-500 mx-1" /> for faster blood support
-              </p>
-              <p className="text-gray-500 text-xs mt-1">Thank you for supporting Jeevo.</p>
-            </div>
+
             <div className="flex items-center space-x-4 text-sm">
-              <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">
+              <Link
+                to="/privacy"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 Privacy
               </Link>
               <span className="text-gray-600">|</span>
-              <Link to="/terms" className="text-gray-400 hover:text-white transition-colors">
+              <Link
+                to="/terms"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 Terms
               </Link>
               <span className="text-gray-600">|</span>
-              <Link to="/cookies" className="text-gray-400 hover:text-white transition-colors">
+              <Link
+                to="/cookies"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 Cookies
               </Link>
             </div>

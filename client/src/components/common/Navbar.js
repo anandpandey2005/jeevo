@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
-import { useSocket } from '../../context/SocketContext';
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../../context/AuthContext";
+import { useSocket } from "../../context/SocketContext";
 import {
   HiMenu,
   HiX,
@@ -20,19 +20,19 @@ import {
   HiUserGroup,
   HiChartBar,
   HiOfficeBuilding,
-  HiCollection
-} from 'react-icons/hi';
+  HiCollection,
+} from "react-icons/hi";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const { unreadCount, notifications } = useSocket();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  
+
   const profileRef = useRef(null);
   const notificationRef = useRef(null);
 
@@ -42,59 +42,75 @@ const Navbar = () => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setIsProfileOpen(false);
       }
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
         setIsNotificationOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Navigation items based on role
   const getNavItems = () => {
     if (!user) {
       return [
-        { name: 'Home', path: '/', icon: HiHome },
-        { name: 'Hospitals', path: '/hospitals', icon: HiOfficeBuilding },
-        { name: 'Blood Drives', path: '/schedules', icon: HiCalendar }
+        { name: "Home", path: "/", icon: HiHome },
+        { name: "Hospitals", path: "/hospitals", icon: HiOfficeBuilding },
+        { name: "Blood Drives", path: "/schedules", icon: HiCalendar },
       ];
     }
 
     const commonItems = [
-      { name: 'Notifications', path: '/notifications', icon: HiBell, mobile: true }
+      {
+        name: "Notifications",
+        path: "/notifications",
+        icon: HiBell,
+        mobile: true,
+      },
     ];
 
     const donorItems = [
-      { name: 'Dashboard', path: '/donor/dashboard', icon: HiHome },
-      { name: 'Find Requests', path: '/donor/find-requests', icon: HiSearch },
-      { name: 'My History', path: '/donor/history', icon: HiClipboardList },
-      { name: 'Profile', path: '/donor/profile', icon: HiUser }
+      { name: "Dashboard 1", path: "/donor/dashboard", icon: HiHome },
+      { name: "Find Requests", path: "/donor/find-requests", icon: HiSearch },
+      { name: "My History", path: "/donor/history", icon: HiClipboardList },
+      { name: "Profile", path: "/donor/profile", icon: HiUser },
     ];
 
     const receiverItems = [
-      { name: 'Dashboard', path: '/receiver/dashboard', icon: HiHome },
-      { name: 'Create Request', path: '/receiver/create-request', icon: HiPlus },
-      { name: 'My Requests', path: '/receiver/my-requests', icon: HiClipboardList },
-      { name: 'Find Donors', path: '/receiver/find-donors', icon: HiSearch }
+      { name: "Dashboard 2", path: "/receiver/dashboard", icon: HiHome },
+      {
+        name: "Create Request",
+        path: "/receiver/create-request",
+        icon: HiPlus,
+      },
+      {
+        name: "My Requests",
+        path: "/receiver/my-requests",
+        icon: HiClipboardList,
+      },
+      { name: "Find Donors", path: "/receiver/find-donors", icon: HiSearch },
     ];
 
     const roleItems = {
       donor: donorItems,
       receiver: receiverItems,
       hospital: [
-        { name: 'Dashboard', path: '/hospital/dashboard', icon: HiHome },
-        { name: 'New Request', path: '/hospital/requests/new', icon: HiPlus },
-        { name: 'Blood Stock', path: '/hospital/stock', icon: HiCollection },
-        { name: 'Requests', path: '/hospital/requests', icon: HiClipboardList },
-        { name: 'Donations', path: '/hospital/donations', icon: HiHeart }
+        { name: "Dashboard", path: "/hospital/dashboard", icon: HiHome },
+        { name: "New Request", path: "/hospital/requests/new", icon: HiPlus },
+        { name: "Blood Stock", path: "/hospital/stock", icon: HiCollection },
+        { name: "Requests", path: "/hospital/requests", icon: HiClipboardList },
+        { name: "Donations", path: "/hospital/donations", icon: HiHeart },
       ],
       admin: [
-        { name: 'Dashboard', path: '/admin/dashboard', icon: HiHome },
-        { name: 'Users', path: '/admin/users', icon: HiUserGroup },
-        { name: 'Hospitals', path: '/admin/hospitals', icon: HiOfficeBuilding },
-        { name: 'Analytics', path: '/admin/analytics', icon: HiChartBar }
-      ]
+        { name: "Dashboard", path: "/admin/dashboard", icon: HiHome },
+        { name: "Users", path: "/admin/users", icon: HiUserGroup },
+        { name: "Hospitals", path: "/admin/hospitals", icon: HiOfficeBuilding },
+        { name: "Analytics", path: "/admin/analytics", icon: HiChartBar },
+      ],
     };
 
     const mergeByPath = (...lists) => {
@@ -107,16 +123,16 @@ const Navbar = () => {
       return Array.from(map.values());
     };
 
-    if (user.role === 'donor') {
+    if (user.role === "donor") {
       return mergeByPath(donorItems, receiverItems, commonItems);
     }
 
-    if (user.role === 'receiver') {
+    if (user.role === "receiver") {
       return mergeByPath(receiverItems, donorItems, commonItems);
     }
 
-    if (user.role === 'user') {
-      return mergeByPath(receiverItems, donorItems, commonItems);
+    if (user.role === "user") {
+      return mergeByPath(donorItems, receiverItems, commonItems);
     }
 
     return [...(roleItems[user.role] || []), ...commonItems];
@@ -124,33 +140,33 @@ const Navbar = () => {
 
   const navItems = getNavItems();
   const getProfilePath = () => {
-    if (!user) return '/settings';
+    if (!user) return "/settings";
     switch (user.role) {
-      case 'donor':
-        return '/donor/profile';
-      case 'hospital':
-        return '/hospital/profile';
-      case 'receiver':
-        return '/receiver/profile';
-      case 'user':
-        return '/receiver/profile';
-      case 'admin':
-        return '/admin/profile';
+      case "donor":
+        return "/donor/profile";
+      case "hospital":
+        return "/hospital/profile";
+      case "receiver":
+        return "/receiver/profile";
+      case "user":
+        return "/receiver/profile";
+      case "admin":
+        return "/admin/profile";
       default:
-        return '/settings';
+        return "/settings";
     }
   };
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
@@ -163,20 +179,22 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {navItems.filter(item => !item.mobile).map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive(item.path)
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`}
-              >
-                <item.icon className="h-5 w-5 mr-1.5" />
-                {item.name}
-              </Link>
-            ))}
+            {navItems
+              .filter((item) => !item.mobile)
+              .map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive(item.path)
+                      ? "bg-primary-100 text-primary-700"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  }`}
+                >
+                  <item.icon className="h-5 w-5 mr-1.5" />
+                  {item.name}
+                </Link>
+              ))}
           </div>
 
           {/* Right Section */}
@@ -194,7 +212,7 @@ const Navbar = () => {
                     <HiBell className="h-6 w-6" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                        {unreadCount > 9 ? '9+' : unreadCount}
+                        {unreadCount > 9 ? "9+" : unreadCount}
                       </span>
                     )}
                   </motion.button>
@@ -210,7 +228,9 @@ const Navbar = () => {
                         className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
                       >
                         <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                          <h3 className="font-semibold text-gray-900">Notifications</h3>
+                          <h3 className="font-semibold text-gray-900">
+                            Notifications
+                          </h3>
                           <Link
                             to="/notifications"
                             className="text-sm text-primary-600 hover:text-primary-700"
@@ -230,11 +250,15 @@ const Navbar = () => {
                               <div
                                 key={index}
                                 className={`p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer ${
-                                  !notif.read ? 'bg-primary-50/50' : ''
+                                  !notif.read ? "bg-primary-50/50" : ""
                                 }`}
                               >
-                                <p className="text-sm text-gray-800 font-medium">{notif.title}</p>
-                                <p className="text-xs text-gray-500 mt-1">{notif.message}</p>
+                                <p className="text-sm text-gray-800 font-medium">
+                                  {notif.title}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {notif.message}
+                                </p>
                                 <p className="text-xs text-gray-400 mt-2">
                                   {new Date(notif.createdAt).toLocaleString()}
                                 </p>
@@ -256,15 +280,20 @@ const Navbar = () => {
                     className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white font-semibold text-sm">
-                      {user.firstName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
+                      {user.firstName?.[0]?.toUpperCase() ||
+                        user.email?.[0]?.toUpperCase()}
                     </div>
                     <div className="hidden lg:block text-left">
                       <p className="text-sm font-medium text-gray-900">
                         {user.firstName} {user.lastName}
                       </p>
-                      <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                      <p className="text-xs text-gray-500 capitalize">
+                        {user.role}
+                      </p>
                     </div>
-                    <HiChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+                    <HiChevronDown
+                      className={`h-4 w-4 text-gray-500 transition-transform ${isProfileOpen ? "rotate-180" : ""}`}
+                    />
                   </motion.button>
 
                   {/* Profile Dropdown Menu */}
@@ -278,7 +307,9 @@ const Navbar = () => {
                         className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden"
                       >
                         <div className="p-4 border-b border-gray-100">
-                          <p className="font-semibold text-gray-900">{user.firstName} {user.lastName}</p>
+                          <p className="font-semibold text-gray-900">
+                            {user.firstName} {user.lastName}
+                          </p>
                           <p className="text-sm text-gray-500">{user.email}</p>
                         </div>
                         <div className="py-2">
@@ -335,7 +366,11 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              {isMobileMenuOpen ? <HiX className="h-6 w-6" /> : <HiMenu className="h-6 w-6" />}
+              {isMobileMenuOpen ? (
+                <HiX className="h-6 w-6" />
+              ) : (
+                <HiMenu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -346,7 +381,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
             className="md:hidden bg-white border-t border-gray-200"
@@ -359,15 +394,15 @@ const Navbar = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 ${
                     isActive(item.path)
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? "bg-primary-100 text-primary-700"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   }`}
                 >
                   <item.icon className="h-5 w-5 mr-3" />
                   {item.name}
                 </Link>
               ))}
-              
+
               {!user && (
                 <div className="pt-4 border-t border-gray-100 space-y-2">
                   <Link

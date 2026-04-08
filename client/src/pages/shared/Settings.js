@@ -197,7 +197,7 @@ const Settings = () => {
                           type="tel"
                           className="input-field"
                           defaultValue={user?.phone || ''}
-                          placeholder="+1 234-567-8900"
+                          placeholder="Enter your phone number"
                         />
                       </div>
 

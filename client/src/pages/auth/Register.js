@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { FaDroplet, FaEye, FaEyeSlash, FaUser, FaHospital, FaHandHoldingMedical } from 'react-icons/fa6';
-import { HiMail, HiLockClosed, HiUser, HiPhone, HiArrowRight, HiArrowLeft } from 'react-icons/hi';
+import { HiMail, HiLockClosed, HiUser, HiPhone, HiArrowRight, HiArrowLeft , HiCheck } from 'react-icons/hi';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -170,9 +170,8 @@ const Register = () => {
         >
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 mb-8">
-            <FaDroplet className="h-8 w-8 text-primary-600" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-              Jeevo
+            <span className="text-2xl font-bold bg-clip-text text-transparent">
+              jeevo
             </span>
           </Link>
 
@@ -637,18 +636,14 @@ const Register = () => {
       </div>
 
       {/* Right Side - Image/Illustration */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-secondary-600 to-secondary-800 items-center justify-center p-12 relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-20 -right-20 w-80 h-80 bg-secondary-400 rounded-full opacity-20"
-          />
-          <motion.div
-            animate={{ rotate: -360 }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-20 -left-20 w-60 h-60 bg-secondary-400 rounded-full opacity-20"
+      <div className="hidden lg:flex flex-1 bg-black items-center justify-center p-12 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 35%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.08), transparent 40%), radial-gradient(circle at 50% 80%, rgba(255,255,255,0.08), transparent 45%)"
+            }}
           />
         </div>
 
@@ -656,49 +651,63 @@ const Register = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative text-center text-white max-w-lg"
+          className="relative text-white max-w-lg w-full"
         >
-          {/* Illustration */}
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="mb-8"
-          >
-            <div className="relative w-48 h-48 mx-auto">
-              <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse" />
-              <div className="absolute inset-4 bg-white/30 rounded-full" />
-              <div className="absolute inset-8 bg-white rounded-full flex items-center justify-center">
-                <FaDroplet className="h-16 w-16 text-secondary-600" />
-              </div>
-            </div>
-          </motion.div>
+          <div className="text-center">
+            <h1 className="text-5xl md:text-6xl mb-3 font-semibold tracking-[0.3em] uppercase">
+              JEEVO
+            </h1>
+            <p className="text-gray-300 text-lg mb-2">
+              Locate. Donate. Celeberate.
+            </p>
+            <p className="text-gray-400 text-sm mt-2 mb-10">
+              Register once to unlock verified donor access, hospital coordination, and real-time alerts when every second counts.
+            </p>
+          </div>
 
-          <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
-          <p className="text-secondary-100 text-lg mb-8">
-            Become part of a network that connects donors, patients, and hospitals. 
-            Together, we can ensure no one waits for life-saving blood.
-          </p>
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 bg-white/10 rounded-xl p-4">
+              <div className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
+                <HiCheck className="text-white" />
+              </div>
+              <div>
+                <p className="text-gray-100 font-semibold">Choose your role</p>
+                <p className="text-gray-400 text-sm">Donor, receiver, hospital, or general user.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-white/10 rounded-xl p-4">
+              <div className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
+                <HiCheck className="text-white" />
+              </div>
+              <div>
+                <p className="text-gray-100 font-semibold">Verify your email</p>
+                <p className="text-gray-400 text-sm">Secure your account and prevent misuse.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-white/10 rounded-xl p-4">
+              <div className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
+                <HiCheck className="text-white" />
+              </div>
+              <div>
+                <p className="text-gray-100 font-semibold">Share key details</p>
+                <p className="text-gray-400 text-sm">Availability and blood group help faster matching.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-white/10 rounded-xl p-4">
+              <div className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
+                <HiCheck className="text-white" />
+              </div>
+              <div>
+                <p className="text-gray-100 font-semibold">Start coordinating</p>
+                <p className="text-gray-400 text-sm">Get notified the moment a match appears.</p>
+              </div>
+            </div>
+          </div>
 
-          {/* Features */}
-          <div className="space-y-4 text-left">
-            <div className="flex items-center gap-4 bg-white/10 rounded-xl p-4">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                ✓
-              </div>
-              <p>Quick and easy registration process</p>
-            </div>
-            <div className="flex items-center gap-4 bg-white/10 rounded-xl p-4">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                ✓
-              </div>
-              <p>Connect with nearby donors and hospitals</p>
-            </div>
-            <div className="flex items-center gap-4 bg-white/10 rounded-xl p-4">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                ✓
-              </div>
-              <p>Track your donations and earn rewards</p>
-            </div>
+          <div className="mt-8 grid grid-cols-3 gap-3 text-center text-xs text-gray-300">
+            <div className="border border-white/20 rounded-lg py-3">Private by default</div>
+            <div className="border border-white/20 rounded-lg py-3">Verified network</div>
+            <div className="border border-white/20 rounded-lg py-3">2-minute setup</div>
           </div>
         </motion.div>
       </div>

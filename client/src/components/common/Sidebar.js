@@ -35,7 +35,7 @@ const Sidebar = ({ isOpen = true, onClose }) => {
       {
         title: 'Main',
         items: [
-          { name: 'Dashboard', path: '/donor/dashboard', icon: HiHome },
+          { name: 'Dashboard 1', path: '/donor/dashboard', icon: HiHome },
           { name: 'My Profile', path: '/donor/profile', icon: HiUser },
           { name: 'Find Requests', path: '/donor/find-requests', icon: HiSearch }
         ]
@@ -62,7 +62,7 @@ const Sidebar = ({ isOpen = true, onClose }) => {
       {
         title: 'Main',
         items: [
-          { name: 'Dashboard', path: '/receiver/dashboard', icon: HiHome },
+          { name: 'Dashboard 2', path: '/receiver/dashboard', icon: HiHome },
           { name: 'Create Request', path: '/receiver/create-request', icon: HiPlus }
         ]
       },
@@ -106,7 +106,7 @@ const Sidebar = ({ isOpen = true, onClose }) => {
         return mergeSections(receiverSections, donorSections);
 
       case 'user':
-        return mergeSections(receiverSections, donorSections);
+        return mergeSections(donorSections,receiverSections);
 
       case 'hospital':
         return [
@@ -204,7 +204,7 @@ const Sidebar = ({ isOpen = true, onClose }) => {
         initial={false}
         animate={{ x: isOpen ? 0 : -300 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white border-r border-gray-200 z-50 overflow-y-auto lg:translate-x-0 lg:relative lg:top-0 lg:z-0 ${
+        className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-black opacity-90 text-gray-50 border-r border-gray-200 z-50 overflow-y-auto lg:translate-x-0 lg:relative lg:top-0 lg:z-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -216,7 +216,7 @@ const Sidebar = ({ isOpen = true, onClose }) => {
                 {user.firstName?.[0]?.toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-gray-900 truncate">
+                <p className="font-semibold text-[#f1f1f1] truncate">
                   {user.firstName} {user.lastName}
                 </p>
                 <p className="text-sm text-gray-500 capitalize">{user.role}</p>

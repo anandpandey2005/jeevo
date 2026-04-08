@@ -12,7 +12,7 @@ const Layout = ({ children, showSidebar = true }) => {
       <Navbar />
       <div className="flex">
         {user && showSidebar && <Sidebar />}
-        <main className={`flex-1 ${user && showSidebar ? '' : 'w-full'}`}>
+        <main className={`flex-1 ${user && showSidebar ? '' : 'w-full'} bg-zinc-300`}>
           <div className="min-h-[calc(100vh-80px)]">
             {children}
           </div>

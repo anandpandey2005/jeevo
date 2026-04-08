@@ -565,11 +565,11 @@ const ManageDonations = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Hemoglobin (g/dL)</label>
-                        <input type="number" step="0.1" className="input-field" placeholder="14.0" name="hemoglobin" value={formData.hemoglobin} onChange={handleFormChange} />
+                        <input type="number" step="0.1" className="input-field" placeholder="e.g., 14.0 g/dL" name="hemoglobin" value={formData.hemoglobin} onChange={handleFormChange} />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Blood Pressure</label>
-                        <input type="text" className="input-field" placeholder="120/80" name="bloodPressure" value={formData.bloodPressure} onChange={handleFormChange} />
+                        <input type="text" className="input-field" placeholder="e.g., 120/80" name="bloodPressure" value={formData.bloodPressure} onChange={handleFormChange} />
                       </div>
                     </div>
 

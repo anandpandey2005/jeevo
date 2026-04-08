@@ -300,9 +300,9 @@ const Landing = () => {
                     <svg width="200" height="260" viewBox="0 0 200 260" className="drop-shadow-2xl">
                       <defs>
                         <linearGradient id="heroBloodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#22d3ee" />
-                          <stop offset="50%" stopColor="#0891b2" />
-                          <stop offset="100%" stopColor="#0e7490" />
+                          <stop offset="0%" stopColor="#f43f5e" />
+                          <stop offset="50%" stopColor="#e11d48" />
+                          <stop offset="100%" stopColor="#7f1d1d" />
                         </linearGradient>
                         <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%">
                           <feGaussianBlur stdDeviation="10" result="coloredBlur" />

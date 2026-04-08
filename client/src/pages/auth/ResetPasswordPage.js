@@ -32,11 +32,8 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
-      </div>
+    <div className="min-h-screen bg-[#f1f1f1] flex items-center justify-center p-4">
+      
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -45,21 +42,16 @@ const ResetPasswordPage = () => {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-              <span className="text-white text-2xl">&#128657;</span>
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
-              Jeevo
-            </span>
+          <Link to="/" className="inline-flex items-center gap-3 text-3xl font-semibold tracking-[0.3em] uppercase text-gray-900 hover:opacity-80 transition-opacity">
+            JEEVO
           </Link>
         </div>
 
-        <div className="glass-card p-8">
+        <div className="glass-card p-8 bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl border border-white/50">
           {!token ? (
             <div className="text-center">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">&#9888;</span>
+              <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">&#9888;</span>
               </div>
               <h1 className="text-2xl font-bold text-gray-800">Invalid reset link</h1>
               <p className="text-gray-600 mt-2">
@@ -72,8 +64,8 @@ const ResetPasswordPage = () => {
           ) : !isSubmitted ? (
             <>
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">&#128274;</span>
+                <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">&#128274;</span>
                 </div>
                 <h1 className="text-2xl font-bold text-gray-800">Reset Password</h1>
                 <p className="text-gray-600 mt-2">
@@ -99,8 +91,8 @@ const ResetPasswordPage = () => {
                         message: 'Must include uppercase, lowercase, and number'
                       }
                     })}
-                    className={`input-field ${errors.password ? 'border-red-500' : ''}`}
-                    placeholder="Enter new password"
+                    className={`input ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    placeholder="Create a new password"
                   />
                   {errors.password && (
                     <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
@@ -117,8 +109,8 @@ const ResetPasswordPage = () => {
                       required: 'Please confirm your password',
                       validate: value => value === password || 'Passwords do not match'
                     })}
-                    className={`input-field ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                    placeholder="Confirm new password"
+                    className={`input ${errors.confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    placeholder="Confirm your new password"
                   />
                   {errors.confirmPassword && (
                     <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
@@ -140,14 +132,14 @@ const ResetPasswordPage = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center"
             >
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">&#9989;</span>
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-3xl">&#9989;</span>
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Password updated</h2>
               <p className="text-gray-600 mb-6">
                 Your password has been reset. You can now sign in with your new password.
               </p>
-              <Link to="/login" className="btn-primary w-full block text-center py-3">
+              <Link to="/login" className="btn-primary w-full block text-center py-3 rounded-xl font-semibold">
                 Back to Login
               </Link>
             </motion.div>
@@ -156,9 +148,9 @@ const ResetPasswordPage = () => {
           <div className="mt-6 text-center">
             <Link
               to="/login"
-              className="text-primary-600 hover:text-primary-700 font-medium inline-flex items-center"
+              className="text-gray-500 hover:text-primary-600 font-medium inline-flex items-center transition-colors"
             >
-              <span className="mr-2">&#8592;</span>
+              <span className="mr-2">&larr;</span>
               Back to Login
             </Link>
           </div>

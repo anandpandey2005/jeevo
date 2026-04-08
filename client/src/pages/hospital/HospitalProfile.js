@@ -204,7 +204,7 @@ const HospitalProfile = () => {
               className="input-field"
               disabled={profileExists}
               {...register('registrationNumber', { required: 'Registration number is required' })}
-              placeholder="Registration number"
+              placeholder="Enter registration number"
             />
             {errors.registrationNumber && <p className="text-red-500 text-sm mt-1">{errors.registrationNumber.message}</p>}
           </div>
@@ -216,7 +216,7 @@ const HospitalProfile = () => {
               className="input-field"
               disabled={profileExists}
               {...register('email', { required: 'Email is required' })}
-              placeholder="hospital@example.com"
+              placeholder="contact@hospital.org"
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
@@ -226,19 +226,19 @@ const HospitalProfile = () => {
             <input
               className="input-field"
               {...register('phone', { required: 'Phone is required' })}
-              placeholder="Primary phone"
+              placeholder="Enter primary phone"
             />
             {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Emergency Phone</label>
-            <input className="input-field" {...register('emergencyPhone')} placeholder="Emergency contact" />
+            <input className="input-field" {...register('emergencyPhone')} placeholder="Emergency contact number" />
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
-            <input className="input-field" {...register('website')} placeholder="https://example.org" />
+            <input className="input-field" {...register('website')} placeholder="https://hospital.org" />
           </div>
         </div>
 
