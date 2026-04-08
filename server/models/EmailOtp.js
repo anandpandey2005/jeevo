@@ -6,8 +6,7 @@ const emailOtpSchema = new mongoose.Schema(
       type: String,
       required: true,
       lowercase: true,
-      trim: true,
-      index: true
+      trim: true
     },
     otpHash: {
       type: String,
@@ -15,8 +14,7 @@ const emailOtpSchema = new mongoose.Schema(
     },
     expiresAt: {
       type: Date,
-      required: true,
-      index: true
+      required: true
     },
     attempts: {
       type: Number,
