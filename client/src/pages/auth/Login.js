@@ -47,11 +47,11 @@ const Login = () => {
           className="w-full max-w-md"
         >
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 mb-8">
-            <span className="text-2xl font-semibold tracking-[0.3em] uppercase text-gray-900">
-              Jeevo
-            </span>
-          </Link>
+            <Link to="/" className="flex items-center space-x-2 mb-8">
+              <span className="text-3xl font-semibold text-gray-900 jeevo-wordmark">
+               Jeevo
+              </span>
+            </Link>
 
           {/* Header */}
           <div className="mb-8">
@@ -179,9 +179,9 @@ const Login = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="relative text-center text-white max-w-lg"
         >
-          <h1 className="text-5xl md:text-6xl mb-6 font-semibold tracking-[0.3em] uppercase">
-            JEEVO
-          </h1>
+            <h1 className="text-5xl md:text-6xl mb-6 font-semibold jeevo-wordmark">
+              Jeevo
+            </h1>
           <p className="text-gray-300 text-lg mb-10">
             Locate. Donate. Celebrate.
           </p>

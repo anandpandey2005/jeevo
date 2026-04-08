@@ -170,11 +170,11 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <span className="text-xl font-semibold tracking-tight text-gray-900 font-display">
-                Jeevo
-              </span>
-            </Link>
+              <Link to="/" className="flex items-center">
+                <span className="text-xl font-semibold text-gray-900 jeevo-wordmark">
+                  Jeevo
+                </span>
+              </Link>
           </div>
 
           {/* Desktop Navigation */}

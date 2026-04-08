@@ -169,11 +169,11 @@ const Register = () => {
           className="w-full max-w-lg"
         >
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 mb-8">
-            <span className="text-2xl font-bold bg-clip-text text-transparent">
-              jeevo
-            </span>
-          </Link>
+            <Link to="/" className="flex items-center space-x-2 mb-8">
+              <span className="text-3xl font-semibold text-gray-900 jeevo-wordmark">
+               Jeevo
+              </span>
+            </Link>
 
           {/* Progress Steps */}
           <div className="mb-8">
@@ -654,9 +654,9 @@ const Register = () => {
           className="relative text-white max-w-lg w-full"
         >
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl mb-3 font-semibold tracking-[0.3em] uppercase">
-              JEEVO
-            </h1>
+              <h1 className="text-5xl md:text-6xl mb-3 font-semibold jeevo-wordmark">
+               Jeevo
+              </h1>
             <p className="text-gray-300 text-lg mb-2">
               Locate. Donate. Celeberate.
             </p>

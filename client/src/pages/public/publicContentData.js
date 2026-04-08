@@ -1,8 +1,8 @@
 const contactDetails = {
-  email: 'pawankr16123114@gmail.com',
+  email: 'anandpandey20005@gmail.com',
   phone: '8750309712',
   phoneHref: '8750309712',
-  address: '5-D Block, Oma Nagar, Meethapur, Badarpur, New Delhi 44'
+  address: 'N/A'
 };
 
 const withEmailSubject = (subject) =>

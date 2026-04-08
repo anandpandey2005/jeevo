@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaGithub, FaLinkedin } from "react-icons/fa6";
-import { HiHeart, HiLocationMarker, HiMail, HiPhone } from "react-icons/hi";
+import { HiLocationMarker, HiMail, HiPhone } from "react-icons/hi";
 
 const supportEmail = "pawankr16123114@gmail.com";
 const createMailto = (subject) =>
@@ -103,11 +103,11 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center mb-4">
-              <span className="text-xl font-semibold text-white font-display">
-                Jeevo
-              </span>
-            </Link>
+              <Link to="/" className="flex items-center mb-4">
+                <span className="text-xl font-semibold text-white jeevo-wordmark">
+                  Jeevo
+                </span>
+              </Link>
             <p className="text-gray-400 mb-2 leading-relaxed">
               A blood coordination platform built to reduce delay between urgent
               need, donor response, and hospital action.

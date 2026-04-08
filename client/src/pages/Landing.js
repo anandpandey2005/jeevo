@@ -5,7 +5,6 @@ import CountUp from 'react-countup';
 import {
   FaBell,
   FaClock,
-  FaDroplet,
   FaHandHoldingHeart,
   FaHeart,
   FaHospital,
@@ -95,6 +94,24 @@ const Landing = () => {
   ];
 
   const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+  const heroPillars = [
+    {
+      title: 'Live Matching',
+      description: 'Locate nearby donors and hospitals with location-first discovery and eligibility context.',
+      icon: FaLocationDot
+    },
+    {
+      title: 'Verified Workflows',
+      description: 'Clear role-based steps keep requests, approvals, and confirmations aligned.',
+      icon: FaShieldHalved
+    },
+    {
+      title: 'Coordinated Responses',
+      description: 'Requests, schedules, and notifications stay connected from first alert to donation.',
+      icon: FaHandHoldingHeart
+    }
+  ];
 
   const heroHighlights = useMemo(() => ([
     {
@@ -195,34 +212,44 @@ const Landing = () => {
           />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-12 items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+              >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6"
+                className="inline-flex items-center px-4 py-2 bg-white/70 text-primary-700 rounded-full text-sm font-medium mb-6 shadow-sm border border-primary-100"
               >
-                <FaDroplet className="mr-2" />
-                Every Drop Counts. Every Life Matters.
+                <motion.span
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-2.5 h-2.5 bg-primary-600 rounded-full mr-3"
+                />
+                Locate. Donate. Celeberate.
               </motion.div>
 
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 font-display"
+                className="text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-900 leading-tight mb-4 jeevo-wordmark"
               >
-                Connect. Donate.
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-800">
-                  Save Lives.
-                </span>
+                Jeevo
               </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                className="text-2xl md:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 mb-6"
+              >
+                Locate. Donate. Celeberate.
+              </motion.p>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -243,12 +270,12 @@ const Landing = () => {
                 Live platform snapshot updated from the database: {lastUpdatedLabel}
               </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="flex flex-col sm:flex-row gap-4 mt-8"
-              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex flex-col sm:flex-row gap-4 mt-8"
+                >
                 <Link
                   to="/register"
                   className="btn-primary px-8 py-4 text-lg font-semibold flex items-center justify-center group"
@@ -261,14 +288,37 @@ const Landing = () => {
                   className="btn-secondary px-8 py-4 text-lg font-semibold flex items-center justify-center"
                 >
                   Request Blood
-                </Link>
-              </motion.div>
+                  </Link>
+                </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="flex items-center gap-8 mt-10 pt-10 border-t border-gray-200"
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.55 }}
+                  className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-10"
+                >
+                  {heroPillars.map((pillar, index) => (
+                    <motion.div
+                      key={pillar.title}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 + index * 0.1 }}
+                      className="glass rounded-2xl border border-white/70 p-4 shadow-sm hover:shadow-lg transition-all duration-300"
+                    >
+                      <div className="w-11 h-11 mb-3 rounded-2xl bg-primary-100 flex items-center justify-center">
+                        <pillar.icon className="h-5 w-5 text-primary-600" />
+                      </div>
+                      <p className="text-base font-semibold text-gray-900 mb-1">{pillar.title}</p>
+                      <p className="text-sm text-gray-600 leading-relaxed">{pillar.description}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex items-center gap-8 mt-10 pt-10 border-t border-gray-200"
               >
                 {heroHighlights.map((highlight, index) => (
                   <React.Fragment key={highlight.label}>
@@ -280,120 +330,9 @@ const Landing = () => {
                     </div>
                     {index < heroHighlights.length - 1 && <div className="h-12 w-px bg-gray-200" />}
                   </React.Fragment>
-                ))}
+                  ))}
+                </motion.div>
               </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative hidden lg:block"
-            >
-              <div className="relative w-full h-[500px]">
-                <motion.div
-                  animate={{ y: [0, -20, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                >
-                  <div className="relative">
-                    <svg width="200" height="260" viewBox="0 0 200 260" className="drop-shadow-2xl">
-                      <defs>
-                        <linearGradient id="heroBloodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#f43f5e" />
-                          <stop offset="50%" stopColor="#e11d48" />
-                          <stop offset="100%" stopColor="#7f1d1d" />
-                        </linearGradient>
-                        <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%">
-                          <feGaussianBlur stdDeviation="10" result="coloredBlur" />
-                          <feMerge>
-                            <feMergeNode in="coloredBlur" />
-                            <feMergeNode in="SourceGraphic" />
-                          </feMerge>
-                        </filter>
-                      </defs>
-                      <path
-                        d="M100 10 C100 10 20 120 20 170 C20 220 55 250 100 250 C145 250 180 220 180 170 C180 120 100 10 100 10"
-                        fill="url(#heroBloodGradient)"
-                        filter="url(#heroGlow)"
-                      />
-                      <ellipse cx="70" cy="140" rx="20" ry="30" fill="rgba(255,255,255,0.2)" transform="rotate(-15 70 140)" />
-                      <path d="M85 180 L95 170 L105 180 L115 170" stroke="white" strokeWidth="3" fill="none" opacity="0.5" />
-                    </svg>
-
-                    <motion.div
-                      animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full border-4 border-primary-400"
-                    />
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [0, -10, 0], rotate: [-3, 3, -3] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute top-10 left-10 glass p-4 rounded-xl shadow-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                      <FaHeart className="text-primary-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Completed Donations</p>
-                      <p className="font-semibold text-gray-900">{renderMetric(platformStats.completedDonations, '+')}</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [0, 10, 0], rotate: [3, -3, 3] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                  className="absolute top-20 right-5 glass p-4 rounded-xl shadow-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-secondary-100 rounded-full flex items-center justify-center">
-                      <FaUserGroup className="text-secondary-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Available Donors</p>
-                      <p className="font-semibold text-gray-900">{renderMetric(platformStats.availableDonors)}</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [0, -15, 0], rotate: [-2, 2, -2] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-                  className="absolute bottom-20 left-5 glass p-4 rounded-xl shadow-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <FaBell className="text-yellow-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Urgent Needs</p>
-                      <p className="font-semibold text-gray-900">{renderMetric(platformStats.urgentRequests)}</p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [0, 8, 0], rotate: [2, -2, 2] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                  className="absolute bottom-10 right-10 glass p-4 rounded-xl shadow-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <FaHospital className="text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Upcoming Drives</p>
-                      <p className="font-semibold text-gray-900">{renderMetric(platformStats.upcomingDrives)}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
