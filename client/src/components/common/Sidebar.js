@@ -187,7 +187,7 @@ const Sidebar = ({ isOpen = true, onClose }) => {
   };
 
   return (
-    <>
+    <div className='md:block hidden'>
       {/* Overlay for mobile */}
       {isOpen && (
         <motion.div
@@ -296,7 +296,7 @@ const Sidebar = ({ isOpen = true, onClose }) => {
           </div>
         </div>
       </motion.aside>
-    </>
+    </div>
   );
 };
 
