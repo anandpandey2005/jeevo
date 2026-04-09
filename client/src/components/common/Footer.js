@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { FaGithub, FaLinkedin } from "react-icons/fa6";
 import { HiLocationMarker, HiMail, HiPhone } from "react-icons/hi";
 
-const supportEmail = "pawankr16123114@gmail.com";
+const supportEmail = "anandpandey20005@gmail.com";
 const createMailto = (subject) =>
   `mailto:${supportEmail}?subject=${encodeURIComponent(subject)}`;
 
