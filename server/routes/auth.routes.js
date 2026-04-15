@@ -79,6 +79,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @access  Public
 router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, res) => {
   const normalizedEmail = normalizeEmail(req.body.email);
+  const isProduction = process.env.NODE_ENV === 'production';
 
   const existingUser = await User.findOne({ email: normalizedEmail }).select('_id').lean();
   if (existingUser) {
@@ -120,6 +121,16 @@ router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, 
     expiresInMinutes: OTP_TTL_MINUTES
   });
 
+  if (!emailResult?.success && !isProduction) {
+    return res.json({
+      success: true,
+      message: 'SMTP unavailable in development. Use the OTP below to continue.',
+      otp: otpCode,
+      deliveryMode: 'development_fallback',
+      ...(emailResult?.error && { emailError: emailResult.error })
+    });
+  }
+
   if (!emailResult?.success && !emailResult?.skipped) {
     await EmailOtp.deleteOne({ email: normalizedEmail, otpHash });
     return res.status(500).json({
@@ -128,7 +139,7 @@ router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, 
     });
   }
 
-  if (emailResult?.skipped && process.env.NODE_ENV === 'production') {
+  if (emailResult?.skipped && isProduction) {
     await EmailOtp.deleteOne({ email: normalizedEmail, otpHash });
     return res.status(500).json({
       success: false,
@@ -138,8 +149,7 @@ router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, 
 
   res.json({
     success: true,
-    message: 'OTP sent to your email',
-    ...(process.env.NODE_ENV !== 'production' && (!emailResult?.success || emailResult?.skipped) && { otp: otpCode })
+    message: 'OTP sent to your email'
   });
 }));
 

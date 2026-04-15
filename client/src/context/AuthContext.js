@@ -232,7 +232,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const normalizedEmail = (email || '').toString().trim().toLowerCase();
       const response = await api.post('/auth/request-otp', { email: normalizedEmail });
-      toast.success('Verification code sent to your email');
+      if (response.data?.otp) {
+        toast.success(`Dev OTP: ${response.data.otp}`, { duration: 10000 });
+      } else {
+        toast.success('Verification code sent to your email');
+      }
       return { success: true, ...response.data };
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to send verification code';
