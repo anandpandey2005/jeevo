@@ -52,9 +52,6 @@ const resolveTransportConfig = () => {
     connectionTimeout: parseNumberEnv(process.env.SMTP_CONNECTION_TIMEOUT, DEFAULT_CONNECTION_TIMEOUT),
     greetingTimeout: parseNumberEnv(process.env.SMTP_GREETING_TIMEOUT, DEFAULT_GREETING_TIMEOUT),
     socketTimeout: parseNumberEnv(process.env.SMTP_SOCKET_TIMEOUT, DEFAULT_SOCKET_TIMEOUT),
-    pool: true,
-    maxConnections: 3,
-    maxMessages: 100,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS

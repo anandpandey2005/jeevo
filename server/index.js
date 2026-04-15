@@ -43,7 +43,7 @@ const app = express();
 const server = http.createServer(app);
 const allowedOrigins = getAllowedOrigins();
 
-// Respect reverse proxy headers in production deployments
+//  Respect reverse proxy headers in production deployments
 app.set('trust proxy', 1);
 
 // Disable ETag to avoid 304 responses for API endpoints
