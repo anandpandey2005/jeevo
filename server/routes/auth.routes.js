@@ -81,6 +81,7 @@ router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, 
   const normalizedEmail = normalizeEmail(req.body.email);
 
   const existingUser = await User.findOne({ email: normalizedEmail });
+  console.log("user not found from the database");
   if (existingUser) {
     return res.status(409).json({
       success: false,
