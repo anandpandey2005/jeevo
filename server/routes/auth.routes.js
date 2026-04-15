@@ -80,8 +80,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, res) => {
   const normalizedEmail = normalizeEmail(req.body.email);
 
-  const existingUser = await User.upsert({ email: normalizedEmail });
-  console.log("user not found from the database");
+  const existingUser = await User.findOne({ email: normalizedEmail }).select('_id').lean();
   if (existingUser) {
     return res.status(409).json({
       success: false,
@@ -122,6 +121,7 @@ router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, 
   });
 
   if (!emailResult?.success && !emailResult?.skipped) {
+    await EmailOtp.deleteOne({ email: normalizedEmail, otpHash });
     return res.status(500).json({
       success: false,
       message: 'Unable to send verification email. Please try again shortly.'
@@ -129,6 +129,7 @@ router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, 
   }
 
   if (emailResult?.skipped && process.env.NODE_ENV === 'production') {
+    await EmailOtp.deleteOne({ email: normalizedEmail, otpHash });
     return res.status(500).json({
       success: false,
       message: 'Email service is not configured. Please contact support.'

@@ -16,6 +16,95 @@ const BRAND = {
 const isEmailConfigured = () =>
   !!(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASS);
 
+const DEFAULT_SMTP_PORT = 587;
+const DEFAULT_CONNECTION_TIMEOUT = 10000;
+const DEFAULT_GREETING_TIMEOUT = 10000;
+const DEFAULT_SOCKET_TIMEOUT = 20000;
+
+let cachedTransporter = null;
+let cachedTransportSignature = null;
+
+const parseNumberEnv = (value, fallback) => {
+  const parsed = Number.parseInt(String(value ?? ''), 10);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const parseBooleanEnv = (value, fallback = false) => {
+  if (value === undefined || value === null || value === '') {
+    return fallback;
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(normalized)) return true;
+  if (['false', '0', 'no', 'off'].includes(normalized)) return false;
+  return fallback;
+};
+
+const resolveTransportConfig = () => {
+  const port = parseNumberEnv(process.env.SMTP_PORT, DEFAULT_SMTP_PORT);
+  const secure = parseBooleanEnv(process.env.SMTP_SECURE, port === 465);
+
+  return {
+    host: process.env.SMTP_HOST,
+    port,
+    secure,
+    requireTLS: parseBooleanEnv(process.env.SMTP_REQUIRE_TLS, !secure && port === 587),
+    connectionTimeout: parseNumberEnv(process.env.SMTP_CONNECTION_TIMEOUT, DEFAULT_CONNECTION_TIMEOUT),
+    greetingTimeout: parseNumberEnv(process.env.SMTP_GREETING_TIMEOUT, DEFAULT_GREETING_TIMEOUT),
+    socketTimeout: parseNumberEnv(process.env.SMTP_SOCKET_TIMEOUT, DEFAULT_SOCKET_TIMEOUT),
+    pool: true,
+    maxConnections: 3,
+    maxMessages: 100,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    },
+    tls: process.env.SMTP_HOST
+      ? {
+          servername: process.env.SMTP_HOST
+        }
+      : undefined
+  };
+};
+
+const resetTransporter = () => {
+  cachedTransporter = null;
+  cachedTransportSignature = null;
+};
+
+const createTransporter = () => {
+  const config = resolveTransportConfig();
+  const signature = JSON.stringify({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    requireTLS: config.requireTLS,
+    user: config.auth.user,
+    connectionTimeout: config.connectionTimeout,
+    greetingTimeout: config.greetingTimeout,
+    socketTimeout: config.socketTimeout
+  });
+
+  if (!cachedTransporter || cachedTransportSignature !== signature) {
+    cachedTransporter = nodemailer.createTransport(config);
+    cachedTransportSignature = signature;
+  }
+
+  return cachedTransporter;
+};
+
+const formatEmailError = (error) => {
+  if (!error) return 'Unknown email error';
+
+  const parts = [];
+  if (error.code) parts.push(error.code);
+  if (error.responseCode) parts.push(`SMTP ${error.responseCode}`);
+  if (error.command) parts.push(error.command);
+
+  const prefix = parts.length ? `[${parts.join(' | ')}] ` : '';
+  return `${prefix}${error.message || 'Email delivery failed'}`;
+};
+
 const formatDateTime = (value) => {
   const date = value ? new Date(value) : new Date();
   if (Number.isNaN(date.getTime())) {
@@ -94,19 +183,6 @@ const buildNotificationTemplate = ({ user, title, message, actionUrl, actionLabe
       footer: 'Thank you for supporting Jeevo.'
     })
   };
-};
-
-// Create transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
 };
 
 // Email templates
@@ -282,9 +358,10 @@ const sendEmail = async (to, template, data) => {
     }
 
     const { subject, html } = Array.isArray(data) ? templateFn(...data) : templateFn(data);
+    const sender = process.env.SMTP_FROM || process.env.SMTP_USER;
 
     const mailOptions = {
-      from: `"${BRAND.name}" <${process.env.SMTP_USER}>`,
+      from: `"${BRAND.name}" <${sender}>`,
       to,
       subject,
       html
@@ -294,8 +371,14 @@ const sendEmail = async (to, template, data) => {
     console.log(`Email sent: ${info.messageId}`);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Email error:', error);
-    return { success: false, error: error.message };
+    resetTransporter();
+    console.error('Email error:', {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      responseCode: error.responseCode
+    });
+    return { success: false, error: formatEmailError(error), code: error.code };
   }
 };
 
