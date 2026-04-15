@@ -80,7 +80,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 router.post('/request-otp', emailOtpRequestValidation, asyncHandler(async (req, res) => {
   const normalizedEmail = normalizeEmail(req.body.email);
 
-  const existingUser = await User.findOne({ email: normalizedEmail });
+  const existingUser = await User.upsert({ email: normalizedEmail });
   console.log("user not found from the database");
   if (existingUser) {
     return res.status(409).json({
